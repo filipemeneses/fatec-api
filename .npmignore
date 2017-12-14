@@ -1,0 +1,6 @@
+.*
+*.js
+*.json
+src
+tests
+!dist/*
