@@ -1,5 +1,5 @@
-import * as cheerio from "cheerio";
 import Network from "core/Network";
+import Student from "models/Student";
 
 export default class Account {
 
@@ -13,6 +13,8 @@ export default class Account {
   public password: string;
   public cookie: string = "";
   public state: number = Account.STATES.IDLE;
+
+  public student: Student = new Student();
 
   constructor (username: string, password: string) {
     this.username = username;
@@ -51,20 +53,17 @@ export default class Account {
     });
   }
 
-  public getName () {
-    let promise = Promise.resolve("");
-    if (!this.cookie) {
-      promise = promise.then(() => this.login());
+  public getName (): Promise<string> {
+    if (this.student.getName()) {
+      return Promise.resolve(this.student.getName());
     }
-    promise = promise.then(() => {
-      return Network.get({
-        cookie: this.cookie,
-        route: Network.ROUTES.HOME,
-      }).then((html) => {
-        const $ = cheerio.load(html);
-        return $("#span_MPW0039vPRO_PESSOALNOME").text();
-      });
+    return Network.scrap({
+      cookie: this.cookie,
+      route: Network.ROUTES.HOME,
+      scrapper: ($) => {
+        this.student.setName($("#span_MPW0039vPRO_PESSOALNOME").text());
+        return this.student.getName();
+      },
     });
-    return promise;
   }
 }

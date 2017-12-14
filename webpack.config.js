@@ -41,7 +41,8 @@ module.exports = {
     extensions: [".ts", ".js"],
     alias: {
       auth: srcPath('auth'),
-      core: srcPath('core')
+      core: srcPath('core'),
+      models: srcPath('models')
     },
   },
   module: {

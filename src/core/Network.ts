@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import * as request from "request-promise-native";
 
 export default class Network {
@@ -13,6 +14,18 @@ export default class Network {
 
   public static getCookieFromResponse (response: any): string {
     return response.hasOwnProperty("headers") ? response.headers["set-cookie"].join(";") : "";
+  }
+
+  public static scrap ({ cookie, route, scrapper }: {cookie: string, route: string, scrapper: (object) => void}): any {
+    let promise = Promise.resolve("");
+    if (!cookie) {
+      promise = promise.then(() => {
+        throw new Error("Missing cookie, try logging in");
+      });
+    }
+    return promise.then(() => {
+      return Network.get({ cookie, route }).then((html) => scrapper(cheerio.load(html)));
+    });
   }
 
   public static post ({ form, route }): Promise<any> {
