@@ -5,7 +5,7 @@
   "main": "dist/fatec-api.min.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha --reporter spec --require ts-node/register 'tests/**/*.test.ts'",
+    "test": "mocha --reporter spec -r ts-node/register  -r tsconfig-paths/register 'tests/**/*.test.ts'",
     "lint": "tslint -p .",
     "lint:fix": "tslint -p . --fix",
     "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",
@@ -31,6 +31,7 @@
     "mocha": "^4.0.1",
     "ts-loader": "^3.2.0",
     "ts-node": "^3.3.0",
+    "tsconfig-paths": "^2.6.0",
     "tslint": "^5.8.0",
     "tslint-config-standard": "^7.0.0",
     "tslint-loader": "^3.5.3",

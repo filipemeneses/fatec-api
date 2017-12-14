@@ -23,6 +23,10 @@ if (yargs.argv.d) {
   plugins.push(new BundleAnalyzerPlugin());
 }
 
+function srcPath(subdir) {
+    return path.join(__dirname, "src", subdir);
+}
+
 module.exports = {
   context: path.resolve("./src"),
   target: 'node',
@@ -34,7 +38,11 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   },
   resolve: {
-    extensions: [".ts", ".js"]
+    extensions: [".ts", ".js"],
+    alias: {
+      auth: srcPath('auth'),
+      core: srcPath('core')
+    },
   },
   module: {
     rules: [

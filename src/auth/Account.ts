@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import Network from "../core/Network";
+import Network from "core/Network";
 
 export default class Account {
 

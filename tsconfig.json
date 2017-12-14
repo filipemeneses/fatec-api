@@ -5,7 +5,12 @@
     "allowSyntheticDefaultImports": false,
     "moduleResolution": "node",
     "removeComments": true,
-    "sourceMap": false
+    "sourceMap": false,
+    "baseUrl": ".",
+    "paths": {
+      "core/*": ["src/core/*"],
+      "auth/*": ["src/auth/*"]
+    }
   },
   "include": [
     "src/**/*"
