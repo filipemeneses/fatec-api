@@ -1,4 +1,7 @@
 import Network from "core/Network";
+import Parser from "core/Parser";
+import Discipline from "models/Discipline";
+import Evaluation from "models/Evaluation";
 import Student from "models/Student";
 
 export default class Account {
@@ -53,6 +56,20 @@ export default class Account {
     });
   }
 
+  public getName (): Promise<string> {
+    if (this.student.getName()) {
+      return Promise.resolve(this.student.getName());
+    }
+    return Network.scrap({
+      cookie: this.cookie,
+      route: Network.ROUTES.HOME,
+      scrapper: ($) => {
+        this.student.setName($("#span_MPW0039vPRO_PESSOALNOME").text());
+        return this.student.getName();
+      },
+    });
+  }
+
   public getRegisteredEmails (): Promise<object> {
     if (this.student.getRegisteredEmails()) {
       return Promise.resolve(this.student.getRegisteredEmails());
@@ -86,16 +103,53 @@ export default class Account {
     });
   }
 
-  public getName (): Promise<string> {
-    if (this.student.getName()) {
-      return Promise.resolve(this.student.getName());
+  public getPartialGrades (): Promise<object> {
+    if (this.student.getPartialGrades()) {
+      return Promise.resolve(this.student.getPartialGrades());
     }
     return Network.scrap({
       cookie: this.cookie,
-      route: Network.ROUTES.HOME,
+      route: Network.ROUTES.PARTIAL_GRADES,
       scrapper: ($) => {
-        this.student.setName($("#span_MPW0039vPRO_PESSOALNOME").text());
-        return this.student.getName();
+        const tag = $("[name=GXState]");
+        let data = $("[name=GXState]").val();
+        data = JSON.parse(data.replace(/\\>/g, "&gt")).Acd_alunonotasparciais_sdt;
+        this.student.setPartialGrades(data.map((line) => {
+          return {
+            approved: Parser.nBoolean(line["ACD_AlunoHistoricoItemAprovada"]),
+            discipline: new Discipline({
+              classRoomId: line["ACD_AlunoHistoricoItemTurmaId"],
+              code: line["ACD_DisciplinaSigla"],
+              courseId: line["ACD_CursoId"],
+              name: line["ACD_DisciplinaNome"],
+              periodId: line["ACD_Periodoid"],
+              quitDate: Parser.strDate(line["ACD_AlunoHistoricoItemDesistenciaData"]),
+              teacherId: line["ACD_AlunoHistoricoItemProfessorId"],
+            }),
+            evaluations: line["Avaliacoes"].map((evaluation) => {
+              return new Evaluation({
+                applyDates: {
+                  applied: Parser.strDate(evaluation["ACD_PlanoEnsinoAvaliacaoDataProva"]),
+                  predicted: Parser.strDate(evaluation["ACD_PlanoEnsinoAvaliacaoDataPrevista"]),
+                  published: Parser.strDate(evaluation["ACD_PlanoEnsinoAvaliacaoDataPublicacao"]),
+                },
+                code: evaluation["ACD_PlanoEnsinoAvaliacaoSufixo"],
+                description: evaluation["ACD_PlanoEnsinoAvaliacaoDescricao"],
+                grades: evaluation.Notas.map((grade) => {
+                  return {
+                    date: Parser.strDate(grade["ACD_PlanoEnsinoAvaliacaoParcialDataLancamento"]),
+                    score: grade["ACD_PlanoEnsinoAvaliacaoParcialNota"],
+                  };
+                }),
+                title: evaluation["ACD_PlanoEnsinoAvaliacaoTitulo"],
+                weight: Parser.strNumber(evaluation["ACD_PlanoEnsinoAvaliacaoPeso"]),
+              });
+            }),
+            finalScore: line["ACD_AlunoHistoricoItemMediaFinal"],
+            frequency: line["ACD_AlunoHistoricoItemFrequencia"],
+          };
+        }));
+        return this.student.getPartialGrades();
       },
     });
   }

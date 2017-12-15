@@ -7,6 +7,7 @@ export default class Network {
   public static readonly ROUTES = {
     HOME: "/aluno/home.aspx",
     LOGIN: "/aluno/login.aspx",
+    PARTIAL_GRADES: "/aluno/notasparciais.aspx",
   };
   public static readonly STATUS = {
     REDIRECT: 303,
@@ -28,7 +29,7 @@ export default class Network {
     });
   }
 
-  public static post ({ form, route }): Promise<any> {
+  public static post ({ form, route }: { form: object, route: string}): Promise<any> {
     const options = Network.buildOptions({
       form,
       method: "POST",

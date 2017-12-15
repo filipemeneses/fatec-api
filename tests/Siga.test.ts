@@ -89,5 +89,72 @@ describe("siga", () => {
       });
     });
   });
+  describe("partial grades", () => {
+    let $partialGrades: any = null;
+    let data: any;
+    let evaluations = [];
+    const grades = [];
+    before((done) => {
+      Network.get({
+        cookie, route: Network.ROUTES.PARTIAL_GRADES,
+      }).then((html) => cheerio.load(html))
+      .then(($) => {
+        $partialGrades = $;
+        done();
+      }).catch((error) => done(error));
+    });
+    it("should have a JSON with grades", () => {
+      const tag = $partialGrades("[name=GXState]");
+      data = $partialGrades("[name=GXState]").val();
+      expect(tag).to.have.lengthOf(1);
+      expect(data).to.be.a("string");
+      data = JSON.parse(data.replace(/\\>/g, "&gt"));
+      expect(data).to.have.property("Acd_alunonotasparciais_sdt");
+    });
+
+    it("the JSON should have list of disciplines with approval, grade, frequency," +
+       " course ID, name, code and evaluations", () => {
+      expect(data.Acd_alunonotasparciais_sdt).to.be.a("array");
+      data = data.Acd_alunonotasparciais_sdt;
+      for (const discipline of data) {
+        expect(discipline).to.have.property("ACD_Periodoid");
+        expect(discipline).to.have.property("ACD_AlunoHistoricoItemAprovada");
+        expect(discipline).to.have.property("ACD_AlunoHistoricoItemMediaFinal");
+        expect(discipline).to.have.property("ACD_AlunoHistoricoItemFrequencia");
+        expect(discipline).to.have.property("ACD_CursoId");
+        expect(discipline).to.have.property("ACD_DisciplinaNome");
+        expect(discipline).to.have.property("ACD_DisciplinaSigla");
+        expect(discipline).to.have.property("ACD_AlunoHistoricoItemTurmaId");
+        expect(discipline).to.have.property("ACD_AlunoHistoricoItemDesistenciaData");
+
+        expect(discipline).to.have.property("Avaliacoes");
+        evaluations = evaluations.concat(discipline.Avaliacoes);
+      }
+    });
+    it("evaluations should contain the JSON should have weight, code, title and description", () => {
+      for (const evaluation of evaluations) {
+        expect(evaluation.ACD_PlanoEnsinoAvaliacaoDataPrevista).to.be.a("string");
+        expect(evaluation.ACD_PlanoEnsinoAvaliacaoDataProva).to.be.a("string");
+        expect(evaluation.ACD_PlanoEnsinoAvaliacaoDataPublicacao).to.be.a("string");
+        expect(evaluation.ACD_PlanoEnsinoAvaliacaoPeso).to.be.a("string");
+        expect(evaluation.ACD_PlanoEnsinoAvaliacaoSufixo).to.be.a("string");
+        expect(evaluation.ACD_PlanoEnsinoAvaliacaoTitulo).to.be.a("string");
+        expect(evaluation.ACD_PlanoEnsinoAvaliacaoDescricao).to.be.a("string");
+        expect(evaluation.Notas).to.be.a("array");
+        for (const grade of evaluation.Notas) {
+          grades.push(grade);
+        }
+      }
+    });
+    it("grades should contain release date and score", () => {
+      if (!grades.length) {
+        console.warn("No grades found, maybe in your profile there is none.");
+      }
+      for (const grade of grades) {
+        expect(grade.ACD_PlanoEnsinoAvaliacaoParcialDataLancamento).to.be.a("string");
+        expect(grade.ACD_PlanoEnsinoAvaliacaoParcialNota).to.be.a("number");
+      }
+    });
+  });
 
 });

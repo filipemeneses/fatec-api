@@ -10,45 +10,12 @@ Install the package:
 npm install fatec-api --save
 ```
 
-Start to use it:
+Check the documentation at: https://filipemeneses.gitbooks.io/fatec-api/
 
-```js
-const FatecApi = require('fatec-api')
 
-const USERNAME = 'YOUR_USERNAME'
-const PASSWORD = 'YOUR_PASSWORD'
+# [Documentation](https://filipemeneses.gitbooks.io/fatec-api/)
 
-let account = new FatecApi.Account(USERNAME, PASSWORD)
-
-account.login().then(() => {
-  return account.getName()
-})
-// <- USER NAME
-```
-
-# Documentation
-
-## Account (user: string, password: string)
-
-#### `.login(): Promise`
-
-This will request SIGA for access and set the account as logged in.
-
-#### `.getName(): Promise<string>`
-
-Will return the account's user name
-
-#### `.getRegisteredEmails(): Promise<IRegisteredEmail[]>`
-
-Will return a list of registered emails and it's respective integrations:
-
-```
-[{
-  email: string,
-  integrations: [ 'fatec', 'etec', 'preferential', 'websai']
-}]
-```
-
+# [Community (Discord)](https://discord.gg/RUv5Kxw)
 
 # Development
 
