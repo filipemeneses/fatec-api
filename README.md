@@ -34,7 +34,7 @@ account.login().then(() => {
 
 This will request SIGA for access and set the account as logged in.
 
-#### .getName(): string
+#### .getName(): Promise<string>
 
 Will return the account's user name
 
@@ -53,7 +53,26 @@ npm i
 ```
 3. **Test:**
 
-  Create the `.env` file in the root with the required values to test available at `tests/FatecApi.test.ts`. Then run:
-```sh
-npm run test
-```
+  Create the `.env` file in the root with the required values to test.
+  ```
+  LOGIN=TEST
+  PASSWORD=TEST
+  NAME=TEST
+  ```
+
+  There is two important test files to keep track with:
+
+  - `tests/FatecApi.test.ts` to test the library features
+  ```sh
+  npm run test:api
+  ```
+
+  - `tests/Siga.test.ts` to test the integrity of SIGA (check if scrapped tags remains the same)
+  ```sh
+  npm run test:siga
+  ```
+
+  To test all:
+  ```sh
+  npm run test
+  ```

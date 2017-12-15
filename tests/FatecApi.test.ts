@@ -1,25 +1,12 @@
 import * as chai from "chai";
-import * as dotenv from "dotenv";
 import * as mocha from "mocha";
-import FatecApi from "../src";
-import Account from "../src/auth/Account";
+import {getAccount} from "./helpers.js";
 
 const expect = chai.expect;
-let account: Account;
-dotenv.config();
+let account: any;
 
 before((done) => {
-  const user = process.env.LOGIN;
-  const pass = process.env.PASSWORD;
-  if (!user || !pass || !process.env.NAME) {
-    return done(new Error(
-      "\n\tTo test, create a file named \".env\" in the root folder and add the values:\n" +
-      "\tLOGIN=TEST\n" +
-      "\tPASSWORD=TEST\n" +
-      "\tNAME=TEST\n"
-    ));
-  }
-  account = new FatecApi.Account(user, pass);
+  account = getAccount();
   done();
 });
 

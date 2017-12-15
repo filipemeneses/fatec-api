@@ -21,15 +21,15 @@ export default class Account {
     this.password = password;
   }
 
-  public isLogged () {
+  public isLogged (): boolean {
     return this.state === Account.STATES.LOGGED;
   }
 
-  public isDenied () {
+  public isDenied (): boolean {
     return this.state === Account.STATES.DENIED;
   }
 
-  public isIdle () {
+  public isIdle (): boolean {
     return this.state === Account.STATES.IDLE;
   }
 

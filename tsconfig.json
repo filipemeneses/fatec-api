@@ -7,6 +7,7 @@
     "removeComments": true,
     "sourceMap": false,
     "baseUrl": ".",
+    "allowJs": true,
     "paths": {
       "core/*": ["src/core/*"],
       "auth/*": ["src/auth/*"],

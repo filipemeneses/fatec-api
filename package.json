@@ -5,7 +5,10 @@
   "main": "dist/fatec-api.min.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha --reporter spec -r ts-node/register  -r tsconfig-paths/register 'tests/**/*.test.ts'",
+    "test": "npm run test:base 'tests/**/*.test.ts'",
+    "test:base": "mocha --reporter spec -r ts-node/register  -r tsconfig-paths/register",
+    "test:api": "npm run test:base 'tests/FatecApi.test.ts'",
+    "test:siga": "npm run test:base 'tests/Siga.test.ts'",
     "lint": "tslint -p .",
     "lint:fix": "tslint -p . --fix",
     "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",

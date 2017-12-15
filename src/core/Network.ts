@@ -37,11 +37,15 @@ export default class Network {
     return request(options);
   }
 
-  public static get ({ cookie, route }): Promise<any> {
-    const options = Network.buildOptions({
-      headers: {
+  public static get ({ cookie, route }: { cookie?: string, route: string}): Promise<any> {
+    let headers = {};
+    if (cookie) {
+      headers = {
         Cookie: cookie,
-      },
+      };
+    }
+    const options = Network.buildOptions({
+      headers,
       method: "GET",
       route,
     });
