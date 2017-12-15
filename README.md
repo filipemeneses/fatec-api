@@ -23,21 +23,31 @@ let account = new FatecApi.Account(USERNAME, PASSWORD)
 account.login().then(() => {
   return account.getName()
 })
-// <- User name
+// <- USER NAME
 ```
 
 # Documentation
 
 ## Account (user: string, password: string)
 
-#### .login(): Promise
+#### `.login(): Promise`
 
 This will request SIGA for access and set the account as logged in.
 
-#### .getName(): Promise<string>
+#### `.getName(): Promise<string>`
 
 Will return the account's user name
 
+#### `.getRegisteredEmails(): Promise<IRegisteredEmail[]>`
+
+Will return a list of registered emails and it's respective integrations:
+
+```
+[{
+  email: string,
+  integrations: [ 'fatec', 'etec', 'preferential', 'websai']
+}]
+```
 
 
 # Development

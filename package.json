@@ -1,12 +1,12 @@
 {
   "name": "fatec-api",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Fatec API",
   "main": "dist/fatec-api.min.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "npm run test:base 'tests/**/*.test.ts'",
-    "test:base": "mocha --reporter spec -r ts-node/register  -r tsconfig-paths/register",
+    "test:base": "mocha --timeout 8000 --reporter spec -r ts-node/register  -r tsconfig-paths/register",
     "test:api": "npm run test:base 'tests/FatecApi.test.ts'",
     "test:siga": "npm run test:base 'tests/Siga.test.ts'",
     "lint": "tslint -p .",

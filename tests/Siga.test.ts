@@ -69,6 +69,25 @@ describe("siga", () => {
       expect(tag).to.have.lengthOf(1);
       expect(tag.text()).to.be.a("string");
     });
+    it("should have an iframe with registered emails", () => {
+      const tag = $home('[name="Embpage1"]');
+      expect(tag).to.have.lengthOf(1);
+      expect(tag.attr("src")).to.be.a("string");
+    });
+    it("should have an iframe with registered emails array list", () => {
+      return Network.get({
+        cookie, route: $home('[name="Embpage1"]').attr("src"),
+      }).then((html) => cheerio.load(html))
+      .then(($iframe) => {
+        const tag = $iframe("[name=Grid1ContainerDataV]");
+        let tableData = $iframe("[name=Grid1ContainerDataV]").val();
+        expect(tag).to.have.lengthOf(1);
+        expect(tableData).to.be.a("string");
+        tableData = JSON.parse(tableData);
+        expect(tableData).to.be.a("array");
+        expect(tableData.length).to.be.above(0);
+      });
+    });
   });
 
 });

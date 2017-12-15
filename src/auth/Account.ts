@@ -53,6 +53,39 @@ export default class Account {
     });
   }
 
+  public getRegisteredEmails (): Promise<object> {
+    if (this.student.getRegisteredEmails()) {
+      return Promise.resolve(this.student.getRegisteredEmails());
+    }
+    return Network.scrap({
+      cookie: this.cookie,
+      route: Network.ROUTES.HOME,
+      scrapper: ($$) => {
+        const iFrameSrc = $$('[name="Embpage1"]').attr("src");
+        return Network.scrap({
+          cookie: this.cookie,
+          route: iFrameSrc,
+          scrapper: ($) => {
+            const emailIntegrations = ["fatec", "etec", "preferential", "websai"];
+            const tableData = JSON.parse($("[name=Grid1ContainerDataV]").val());
+            this.student.setRegisteredEmails(tableData.map((line) => {
+              return {
+                email: line[0],
+                integrations: line.slice(3, line.length).reduce((integrations, isIntegrated, index) => {
+                  if (isIntegrated === "1") {
+                    integrations.push(emailIntegrations[index]);
+                  }
+                  return integrations;
+                }, []),
+              };
+            }));
+            return this.student.getRegisteredEmails();
+          },
+        });
+      },
+    });
+  }
+
   public getName (): Promise<string> {
     if (this.student.getName()) {
       return Promise.resolve(this.student.getName());

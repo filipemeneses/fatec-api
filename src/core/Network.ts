@@ -61,6 +61,7 @@ export default class Network {
     if (method.toLowerCase() === "post") {
       headers["Content-Type"] = "application/x-www-form-urlencoded";
     }
+    const uri: string = !route.startsWith("http") ? `${this.DOMAIN}${route}` : route;
 
     return {
       form: Object.assign({
@@ -79,7 +80,7 @@ export default class Network {
         "165c97fac0d4c1ad6055e3730b7af070,,gx-no-cache": 1513131652687,
       },
       strictSSL: false,
-      uri: `${this.DOMAIN}${route}`,
+      uri,
     };
   }
 
