@@ -1,7 +1,20 @@
 {
   "name": "fatec-api",
   "version": "0.4.0",
-  "description": "Fatec API",
+  "description": "API for SIGA from Centro Paula Souza made for students to create things based in their profile data",
+  "keywords": [
+    "fatec",
+    "fatec-api",
+    "api",
+    "scrapper",
+    "siga",
+    "profile-data"
+  ],
+  "homepage": "https://filipemeneses.gitbooks.io/fatec-api",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/filipemeneses/fatec-api.git"
+  },
   "main": "dist/fatec-api.min.js",
   "types": "dist/index.d.ts",
   "scripts": {
