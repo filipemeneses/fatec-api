@@ -13,9 +13,26 @@ npm install fatec-api --save
 Check the documentation at: https://filipemeneses.gitbooks.io/fatec-api/
 
 
-# [Documentation](https://filipemeneses.gitbooks.io/fatec-api/)
+# Documentation
 
-# [Community (Discord)](https://discord.gg/RUv5Kxw)
+Available at: https://filipemeneses.gitbooks.io/fatec-api/
+
+# Discussion
+
+Available at: https://discord.gg/RUv5Kxw
+
+# How it works
+
+This library scrap data using HTTP requests with `request` and parses the HTML with `cheerio` library.
+
+The `Account` class does the heavy lifting. Here's the flow of Account.getName():
+
+![](https://filipemeneses.gitbooks.io/fatec-api/content/assets/requests.svg)
+
+The scrapped data is later available at `Account.student` on an account instance.
+
+Check out the [documentation](https://filipemeneses.gitbooks.io/fatec-api/) for more info.
+
 
 # Development
 
