@@ -38,6 +38,16 @@ interface ISchedule {
   periods: IPeriod[];
 }
 
+interface IHistoryEntry {
+  discipline: Discipline;
+  period: string;
+  grade: string;
+  frequency: number;
+  absenses: number;
+  approved: boolean;
+  observation: string;
+}
+
 export default class Student {
 
   private name: string;
@@ -45,9 +55,18 @@ export default class Student {
   private partialGrades: IPartialGrade[];
   private enrolledDisciplines: Discipline[] = [];
   private schedules: ISchedule[];
+  private history: IHistoryEntry[];
 
   public isEnrolledAtDiscipline (discipline: Discipline): boolean {
     return this.enrolledDisciplines.filter((_discipline) => _discipline.getCode() === discipline.getCode()).length > 0;
+  }
+
+  public setHistory (history: IHistoryEntry[]): void {
+    this.history = history;
+  }
+
+  public getHistory (): IHistoryEntry[] {
+    return this.history;
   }
 
   public setSchedules (schedules: ISchedule[]): void {

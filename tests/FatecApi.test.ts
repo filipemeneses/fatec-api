@@ -140,6 +140,29 @@ describe("fatec-api", () => {
         }
       });
     });
+    it("should have history", () => {
+      return account.getHistory().then((entries) => {
+        if (entries.length) {
+          for (const entry of entries) {
+            expect(entry).to.have.property("discipline");
+            expect(entry).to.have.property("period");
+            expect(entry).to.have.property("grade");
+            expect(entry).to.have.property("frequency");
+            expect(entry).to.have.property("absenses");
+            expect(entry).to.have.property("approved");
+            expect(entry).to.have.property("observation");
+
+            expect(entry.discipline).to.be.a.instanceOf(Discipline);
+            expect(entry.period).to.be.a("string");
+            expect(entry.grade).to.be.a("number");
+            expect(entry.frequency).to.be.a("number");
+            expect(entry.absenses).to.be.a("number");
+            expect(entry.approved).to.be.a("boolean");
+            expect(entry.observation).to.be.a("string");
+          }
+        }
+      });
+    });
   });
   describe("student", () => {
     it("should get name", () => {
@@ -253,6 +276,29 @@ describe("fatec-api", () => {
           expect(period.endAt).to.be.a("date");
           expect(period.discipline).to.be.a.instanceof(Discipline);
           expect(period.classroomCode).to.be.a("string");
+        }
+      }
+    });
+
+    it("should have history", () => {
+      const history = account.student.getHistory();
+      if (history.length) {
+        for (const entry of history) {
+          expect(entry).to.have.property("discipline");
+          expect(entry).to.have.property("period");
+          expect(entry).to.have.property("grade");
+          expect(entry).to.have.property("frequency");
+          expect(entry).to.have.property("absenses");
+          expect(entry).to.have.property("approved");
+          expect(entry).to.have.property("observation");
+
+          expect(entry.discipline).to.be.a.instanceOf(Discipline);
+          expect(entry.period).to.be.a("string");
+          expect(entry.grade).to.be.a("number");
+          expect(entry.frequency).to.be.a("number");
+          expect(entry.absenses).to.be.a("number");
+          expect(entry.approved).to.be.a("boolean");
+          expect(entry.observation).to.be.a("string");
         }
       }
     });

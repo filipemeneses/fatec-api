@@ -5,6 +5,7 @@ export default class Network {
 
   public static readonly DOMAIN: string = "https://siga.cps.sp.gov.br";
   public static readonly ROUTES = {
+    HISTORY: "/aluno/historicocompleto.aspx",
     HOME: "/aluno/home.aspx",
     LOGIN: "/aluno/login.aspx",
     PARTIAL_ABSENSES: "/aluno/faltasparciais.aspx",

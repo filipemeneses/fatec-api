@@ -67,6 +67,29 @@ export default class Account {
     });
   }
 
+  public getHistory (): Promise<string> {
+    return Network.scrap({
+      cookie: this.cookie,
+      route: Network.ROUTES.HISTORY,
+      scrapper: ($) => {
+        const data = JSON.parse($("[name=Grid1ContainerDataV]").attr("value"));
+        const approvedCheckboxStr = "Resources/checkTrue.png";
+        this.student.setHistory(data.map((entry) => {
+          return {
+            absenses: Parser.strNumber(entry[6]),
+            approved: entry[3] === approvedCheckboxStr,
+            discipline: new Discipline({code: entry[0], name: entry[1]}),
+            frequency: Parser.strNumber(entry[5]),
+            grade: Parser.strNumber(entry[4]),
+            observation: entry[7],
+            period: entry[2],
+          };
+        }));
+        return this.student.getHistory();
+      },
+    });
+  }
+
   public getSchedules (): Promise<string> {
     return Network.scrap({
       cookie: this.cookie,

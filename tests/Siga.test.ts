@@ -235,4 +235,27 @@ describe("siga", () => {
       expect($schedules('[name="Grid3ContainerDataV"]')).to.have.lengthOf(1);
     });
   });
+  describe("history", () => {
+    let $history: any = null;
+    let data: any;
+
+    before((done) => {
+      Network.get({
+        cookie, route: Network.ROUTES.HISTORY,
+      }).then((html) => cheerio.load(html))
+      .then(($) => {
+        $history = $;
+        done();
+      }).catch((error) => done(error));
+    });
+
+    it("should have a JSON with history entries", () => {
+      const tag = $history("[name=Grid1ContainerDataV]");
+      data = $history("[name=Grid1ContainerDataV]").val();
+      expect(tag).to.have.lengthOf(1);
+      expect(data).to.be.a("string");
+      data = JSON.parse(data);
+      expect(data).to.be.an("array");
+    });
+  });
 });

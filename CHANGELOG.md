@@ -1,3 +1,7 @@
+### 0.6.0 (2017-12-16)
+
+- Solving #5 by adding complete history method scrapper
+
 ### 0.5.0 (2017-12-16)
 
 - Solving #3 by adding schedules method scrapper
