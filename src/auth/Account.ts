@@ -67,6 +67,44 @@ export default class Account {
     });
   }
 
+  public getSchedules (): Promise<string> {
+    return Network.scrap({
+      cookie: this.cookie,
+      route: Network.ROUTES.SCHEDULE,
+      scrapper: ($) => {
+        const tags = [
+          "[name='Grid2ContainerDataV']",
+          "[name='Grid3ContainerDataV']",
+          "[name='Grid4ContainerDataV']",
+          "[name='Grid5ContainerDataV']",
+          "[name='Grid6ContainerDataV']",
+          "[name='Grid7ContainerDataV']",
+        ];
+
+        this.student.setSchedules(tags.map((tag, index) => {
+          const data = JSON.parse($(tag).attr("value"));
+
+          return {
+            periods: data.map((period) => {
+              let [startAt, endAt] = period[1].split("-");
+              startAt = `0000-01-01 ${startAt}:00`;
+              endAt = `0000-01-01 ${endAt}:00`;
+
+              return {
+                classroomCode: period[3],
+                discipline: this.student.getEnrolledDisciplineByCode(period[2]) || new Discipline({code: period[2]}),
+                endAt: Parser.strDate(endAt),
+                startAt: Parser.strDate(startAt),
+              };
+            }),
+            weekday: index + 1,
+          };
+        }));
+        return this.student.getSchedules();
+      },
+    });
+  }
+
   public getRegisteredEmails (): Promise<object> {
     if (this.student.getRegisteredEmails()) {
       return Promise.resolve(this.student.getRegisteredEmails());
@@ -115,7 +153,7 @@ export default class Account {
           return {
             approved: Parser.nBoolean(line["ACD_AlunoHistoricoItemAprovada"]),
             discipline: new Discipline({
-              classRoomId: line["ACD_AlunoHistoricoItemTurmaId"],
+              classroomId: line["ACD_AlunoHistoricoItemTurmaId"],
               code: line["ACD_DisciplinaSigla"],
               courseId: line["ACD_CursoId"],
               name: line["ACD_DisciplinaNome"],
@@ -172,8 +210,8 @@ export default class Account {
 
               return new Discipline({
                 absenses: line["TotalAusencias"],
-                classRoomCode: scheduleDiscipline["ACD_TurmaLetra"],
-                classRoomId: line["ACD_AlunoHistoricoItemTurmaId"],
+                classroomCode: scheduleDiscipline["ACD_TurmaLetra"],
+                classroomId: line["ACD_AlunoHistoricoItemTurmaId"],
                 code: line["ACD_DisciplinaSigla"].trim(),
                 courseId: line["ACD_AlunoHistoricoItemCursoId"],
                 name: line["ACD_DisciplinaNome"],

@@ -1,3 +1,8 @@
+### 0.5.0 (2017-12-16)
+
+- Solving #3 by adding schedules method scrapper
+
+
 ### 0.4.0 (2017-12-16)
 
 - Removing multiple requests, now has a queue with 1s delay

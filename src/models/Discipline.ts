@@ -3,8 +3,8 @@ export default class Discipline {
   private name: string;
   private code: string;
   private period: string;
-  private classRoomCode: string;
-  private classRoomId: number;
+  private classroomCode: string;
+  private classroomId: number;
   private quitDate: Date;
   private periodId: number;
   private courseId: number;
@@ -17,8 +17,8 @@ export default class Discipline {
     absenses,
     name,
     code,
-    classRoomCode,
-    classRoomId,
+    classroomCode,
+    classroomId,
     quitDate,
     periodId,
     presences,
@@ -27,10 +27,10 @@ export default class Discipline {
     teacherId,
   }: {
     absenses?: number,
-    name: string,
+    name?: string,
     code: string,
-    classRoomCode?: string,
-    classRoomId?: number,
+    classroomCode?: string,
+    classroomId?: number,
     quitDate?: Date,
     periodId?: number,
     presences?: number,
@@ -41,8 +41,8 @@ export default class Discipline {
     this.absenses = absenses;
     this.name = name;
     this.code = code;
-    this.classRoomId = classRoomId;
-    this.classRoomCode = classRoomCode;
+    this.classroomId = classroomId;
+    this.classroomCode = classroomCode;
     this.quitDate = quitDate || new Date(0);
     this.periodId = periodId;
     this.courseId = courseId;
@@ -51,12 +51,12 @@ export default class Discipline {
     this.teacherName = teacherName;
   }
 
-  public setClassRoomCode (classRoomCode: string): void {
-    this.classRoomCode = classRoomCode;
+  public setclassroomCode (classroomCode: string): void {
+    this.classroomCode = classroomCode;
   }
 
-  public getClassRoomCode (): string {
-    return this.classRoomCode;
+  public getClassroomCode (): string {
+    return this.classroomCode;
   }
 
   public setTeacherName (teacherName: string): void {
@@ -107,12 +107,12 @@ export default class Discipline {
     return this.period;
   }
 
-  public setClassRoomId (classRoomId: number): void {
-    this.classRoomId = classRoomId;
+  public setclassroomId (classroomId: number): void {
+    this.classroomId = classroomId;
   }
 
-  public getClassRoomId (): number  {
-    return this.classRoomId;
+  public getClassroomId (): number  {
+    return this.classroomId;
   }
 
   public setQuitDate (quitDate: Date): void {

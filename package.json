@@ -1,6 +1,6 @@
 {
   "name": "fatec-api",
-  "version": "0.4.01",
+  "version": "0.5.0",
   "description": "API for SIGA from Centro Paula Souza made for students to create things based in their profile data",
   "keywords": [
     "fatec",

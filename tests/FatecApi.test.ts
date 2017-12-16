@@ -106,14 +106,36 @@ describe("fatec-api", () => {
             expect(discipline.getAbsenses()).to.be.a("number");
             expect(discipline.getName()).to.be.a("string");
             expect(discipline.getCode()).to.be.a("string");
-            expect(discipline.getClassRoomId()).to.be.a("number");
-            expect(discipline.getClassRoomCode()).to.be.a("string");
+            expect(discipline.getClassroomId()).to.be.a("number");
+            expect(discipline.getClassroomCode()).to.be.a("string");
             expect(discipline.getQuitDate()).to.be.a("date");
             expect(discipline.getPeriodId()).to.be.a("number");
             expect(discipline.getCourseId()).to.be.a("number");
             expect(discipline.getPresences()).to.be.a("number");
             expect(discipline.getTeacherId()).to.be.a("number");
             expect(discipline.getTeacherName()).to.be.a("string");
+          }
+        }
+      });
+    });
+    it("should have schedules", () => {
+      return account.getSchedules().then((days) => {
+        expect(days).to.be.an("array");
+        expect(days).to.be.lengthOf(6);
+        for (const day of days) {
+          expect(day).to.have.property("periods");
+          expect(day).to.have.property("weekday");
+          expect(day.periods).to.be.an("array");
+          expect(day.weekday).to.be.a("number");
+          for (const period of day.periods) {
+            expect(period).to.have.property("startAt");
+            expect(period).to.have.property("endAt");
+            expect(period).to.have.property("discipline");
+            expect(period).to.have.property("classroomCode");
+            expect(period.startAt).to.be.a("date");
+            expect(period.endAt).to.be.a("date");
+            expect(period.discipline).to.be.a.instanceof(Discipline);
+            expect(period.classroomCode).to.be.a("string");
           }
         }
       });
@@ -201,14 +223,36 @@ describe("fatec-api", () => {
           expect(discipline.getAbsenses()).to.be.a("number");
           expect(discipline.getName()).to.be.a("string");
           expect(discipline.getCode()).to.be.a("string");
-          expect(discipline.getClassRoomId()).to.be.a("number");
-          expect(discipline.getClassRoomCode()).to.be.a("string");
+          expect(discipline.getClassroomId()).to.be.a("number");
+          expect(discipline.getClassroomCode()).to.be.a("string");
           expect(discipline.getQuitDate()).to.be.a("date");
           expect(discipline.getPeriodId()).to.be.a("number");
           expect(discipline.getCourseId()).to.be.a("number");
           expect(discipline.getPresences()).to.be.a("number");
           expect(discipline.getTeacherId()).to.be.a("number");
           expect(discipline.getTeacherName()).to.be.a("string");
+        }
+      }
+    });
+
+    it("should have schedules", () => {
+      const schedules = account.student.getSchedules();
+      expect(schedules).to.be.an("array");
+      expect(schedules).to.be.lengthOf(6);
+      for (const day of schedules) {
+        expect(day).to.have.property("periods");
+        expect(day).to.have.property("weekday");
+        expect(day.periods).to.be.an("array");
+        expect(day.weekday).to.be.a("number");
+        for (const period of day.periods) {
+          expect(period).to.have.property("startAt");
+          expect(period).to.have.property("endAt");
+          expect(period).to.have.property("discipline");
+          expect(period).to.have.property("classroomCode");
+          expect(period.startAt).to.be.a("date");
+          expect(period.endAt).to.be.a("date");
+          expect(period.discipline).to.be.a.instanceof(Discipline);
+          expect(period.classroomCode).to.be.a("string");
         }
       }
     });

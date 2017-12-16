@@ -3,11 +3,13 @@ import * as cheerio from "cheerio";
 import * as dotenv from "dotenv";
 import * as mocha from "mocha";
 import Network from "core/Network";
+import Parser from "core/Parser";
 import {getAccount} from "./helpers.js";
 
 const expect = chai.expect;
 let account: any;
 let cookie: string;
+
 before((done) => {
   account = getAccount();
   account.login().then(() => {
@@ -18,7 +20,6 @@ before((done) => {
       done(new Error("Invalid credentials or SIGA is off"));
     }
   });
-
 });
 
 describe("siga", () => {
@@ -108,7 +109,7 @@ describe("siga", () => {
       data = $partialGrades("[name=GXState]").val();
       expect(tag).to.have.lengthOf(1);
       expect(data).to.be.a("string");
-      data = JSON.parse(data.replace(/\\>/g, "&gt"));
+      data = Parser.parseGxState(data);
       expect(data).to.have.property("Acd_alunonotasparciais_sdt");
     });
 
@@ -173,7 +174,7 @@ describe("siga", () => {
       data = $absenses("[name=GXState]").val();
       expect(tag).to.have.lengthOf(1);
       expect(data).to.be.a("string");
-      data = JSON.parse(data.replace(/\\>/g, "&gt"));
+      data = Parser.parseGxState(data);
       expect(data).to.have.property("vFALTAS");
     });
     it("the JSON should have a list of enrolled disciplines with total absense, classroom ID, discipline code," +
@@ -209,7 +210,7 @@ describe("siga", () => {
       data = $schedules("[name=GXState]").val();
       expect(tag).to.have.lengthOf(1);
       expect(data).to.be.a("string");
-      data = JSON.parse(data.replace(/\\>/g, "&gt"));
+      data = Parser.parseGxState(data);
       expect(data).to.have.property("vALU_ALUNOHISTORICOITEM_SDT");
     });
 
@@ -223,6 +224,15 @@ describe("siga", () => {
         expect(line).to.have.property("ACD_DisciplinaSigla");
         expect(line).to.have.property("ACD_DisciplinaNome");
       }
+    });
+
+    it("should have a JSON with grades", () => {
+      expect($schedules('[name="Grid2ContainerDataV"]')).to.have.lengthOf(1);
+      expect($schedules('[name="Grid3ContainerDataV"]')).to.have.lengthOf(1);
+      expect($schedules('[name="Grid4ContainerDataV"]')).to.have.lengthOf(1);
+      expect($schedules('[name="Grid5ContainerDataV"]')).to.have.lengthOf(1);
+      expect($schedules('[name="Grid6ContainerDataV"]')).to.have.lengthOf(1);
+      expect($schedules('[name="Grid3ContainerDataV"]')).to.have.lengthOf(1);
     });
   });
 });
