@@ -57,9 +57,6 @@ export default class Account {
   }
 
   public getName (): Promise<string> {
-    if (this.student.getName()) {
-      return Promise.resolve(this.student.getName());
-    }
     return Network.scrap({
       cookie: this.cookie,
       route: Network.ROUTES.HOME,
@@ -150,6 +147,45 @@ export default class Account {
           };
         }));
         return this.student.getPartialGrades();
+      },
+    });
+  }
+
+  public getEnrolledDisciplines (): Promise<object> {
+    return Network.scrap({
+      cookie: this.cookie,
+      route: Network.ROUTES.PARTIAL_ABSENSES,
+      scrapper: ($$) => {
+        let data = $$("[name=GXState]").val();
+        data = JSON.parse(data.replace(/\\>/g, "&gt")).vFALTAS;
+
+        return Network.scrap({
+          cookie: this.cookie,
+          route: Network.ROUTES.SCHEDULE,
+          scrapper: ($) => {
+            let scheduleData = $("[name=GXState]").val();
+            scheduleData = JSON.parse(scheduleData.replace(/\\>/g, "&gt")).vALU_ALUNOHISTORICOITEM_SDT;
+            this.student.setEnrolledDisciplines(data.map((line) => {
+              const scheduleDiscipline = scheduleData.filter((d) => {
+                return d["ACD_DisciplinaSigla"] === line["ACD_DisciplinaSigla"].trim();
+              })[0];
+
+              return new Discipline({
+                absenses: line["TotalAusencias"],
+                classRoomCode: scheduleDiscipline["ACD_TurmaLetra"],
+                classRoomId: line["ACD_AlunoHistoricoItemTurmaId"],
+                code: line["ACD_DisciplinaSigla"].trim(),
+                courseId: line["ACD_AlunoHistoricoItemCursoId"],
+                name: line["ACD_DisciplinaNome"],
+                periodId: line["ACD_Periodoid"],
+                presences: line["TotalPresencas"],
+                teacherId: line["ACD_AlunoHistoricoItemProfessorId"],
+                teacherName: scheduleDiscipline["Pro_PessoalNome"],
+              });
+            }));
+            return this.student.getEnrolledDisciplines();
+          },
+        });
       },
     });
   }

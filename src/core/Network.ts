@@ -7,7 +7,9 @@ export default class Network {
   public static readonly ROUTES = {
     HOME: "/aluno/home.aspx",
     LOGIN: "/aluno/login.aspx",
+    PARTIAL_ABSENSES: "/aluno/faltasparciais.aspx",
     PARTIAL_GRADES: "/aluno/notasparciais.aspx",
+    SCHEDULE: "/aluno/horario.aspx",
   };
   public static readonly STATUS = {
     REDIRECT: 303,
@@ -18,6 +20,10 @@ export default class Network {
   }
 
   public static scrap ({ cookie, route, scrapper }: {cookie: string, route: string, scrapper: (object) => void}): any {
+    if (this.scrapperCache[route]) {
+      if (!this.scrapperCache[route].isExpired()) { return Promise.resolve(scrapper(this.scrapperCache[route].$)); }
+      this.scrapperCache[route] = null;
+    }
     let promise = Promise.resolve("");
     if (!cookie) {
       promise = promise.then(() => {
@@ -25,7 +31,18 @@ export default class Network {
       });
     }
     return promise.then(() => {
-      return Network.get({ cookie, route }).then((html) => scrapper(cheerio.load(html)));
+      return Network.get({ cookie, route }).then((html) => {
+        const $ = cheerio.load(html);
+        const createdAt = +new Date();
+        const duration = 1000 * 60 * 5;
+        this.scrapperCache[route] = {
+          $,
+          isExpired () {
+           return +new Date() > (createdAt + duration);
+          },
+        };
+        return scrapper($);
+      });
     });
   }
 
@@ -35,7 +52,7 @@ export default class Network {
       method: "POST",
       route,
     });
-    return request(options);
+    return this.delayedRequest(options);
   }
 
   public static get ({ cookie, route }: { cookie?: string, route: string}): Promise<any> {
@@ -50,7 +67,27 @@ export default class Network {
       method: "GET",
       route,
     });
-    return request(options);
+    return this.delayedRequest(options);
+  }
+
+  private static scrapperCache = {};
+  private static requestsQueue = 0;
+
+  private static delayedRequest (options: object): Promise<any> {
+    const position = ++Network.requestsQueue;
+    return new Promise((resolve, reject) => {
+      if (position > 1) {
+        setTimeout(() => {
+          if (Network.requestsQueue === 1) {
+            Network.requestsQueue--;
+            request(options).then(resolve).catch(reject);
+          }
+        }, 1000);
+      } else {
+        Network.requestsQueue--;
+        request(options).then(resolve).catch(reject);
+      }
+    });
   }
 
   private static buildOptions ({ method, route, headers, form }:

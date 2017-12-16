@@ -156,5 +156,73 @@ describe("siga", () => {
       }
     });
   });
+  describe("partial absenses", () => {
+    let $absenses: any = null;
+    let data: any;
+    before((done) => {
+      Network.get({
+        cookie, route: Network.ROUTES.PARTIAL_ABSENSES,
+      }).then((html) => cheerio.load(html))
+      .then(($) => {
+        $absenses = $;
+        done();
+      }).catch((error) => done(error));
+    });
+    it("should have a JSON with absenses", () => {
+      const tag = $absenses("[name=GXState]");
+      data = $absenses("[name=GXState]").val();
+      expect(tag).to.have.lengthOf(1);
+      expect(data).to.be.a("string");
+      data = JSON.parse(data.replace(/\\>/g, "&gt"));
+      expect(data).to.have.property("vFALTAS");
+    });
+    it("the JSON should have a list of enrolled disciplines with total absense, classroom ID, discipline code," +
+       " course ID, discipline name, period ID, total presences and teacher ID", () => {
+      expect(data.vFALTAS).to.be.a("array");
+      data = data.vFALTAS;
+      for (const line of data) {
+        expect(line).to.have.property("TotalAusencias");
+        expect(line).to.have.property("ACD_AlunoHistoricoItemTurmaId");
+        expect(line).to.have.property("ACD_DisciplinaSigla");
+        expect(line).to.have.property("ACD_AlunoHistoricoItemCursoId");
+        expect(line).to.have.property("ACD_DisciplinaNome");
+        expect(line).to.have.property("ACD_Periodoid");
+        expect(line).to.have.property("TotalPresencas");
+        expect(line).to.have.property("ACD_AlunoHistoricoItemProfessorId");
+      }
+    });
+  });
+  describe("schedules", () => {
+    let $schedules: any = null;
+    let data: any;
+    before((done) => {
+      Network.get({
+        cookie, route: Network.ROUTES.SCHEDULE,
+      }).then((html) => cheerio.load(html))
+      .then(($) => {
+        $schedules = $;
+        done();
+      }).catch((error) => done(error));
+    });
+    it("should have a JSON with grades", () => {
+      const tag = $schedules("[name=GXState]");
+      data = $schedules("[name=GXState]").val();
+      expect(tag).to.have.lengthOf(1);
+      expect(data).to.be.a("string");
+      data = JSON.parse(data.replace(/\\>/g, "&gt"));
+      expect(data).to.have.property("vALU_ALUNOHISTORICOITEM_SDT");
+    });
 
+    it("the JSON should have a list of enrolled disciplines with name, code, classroom code," +
+       " and teacher name", () => {
+      expect(data.vALU_ALUNOHISTORICOITEM_SDT).to.be.a("array");
+      data = data.vALU_ALUNOHISTORICOITEM_SDT;
+      for (const line of data) {
+        expect(line).to.have.property("ACD_TurmaLetra");
+        expect(line).to.have.property("Pro_PessoalNome");
+        expect(line).to.have.property("ACD_DisciplinaSigla");
+        expect(line).to.have.property("ACD_DisciplinaNome");
+      }
+    });
+  });
 });

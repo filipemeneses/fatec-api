@@ -1,6 +1,7 @@
 import Account from "../src/auth/Account";
 import * as dotenv from "dotenv";
 import FatecApi from "../src";
+import timer from "timer"
 
 dotenv.config();
 

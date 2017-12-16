@@ -3,28 +3,84 @@ export default class Discipline {
   private name: string;
   private code: string;
   private period: string;
+  private classRoomCode: string;
   private classRoomId: number;
   private quitDate: Date;
   private periodId: number;
   private courseId: number;
+  private teacherName: string;
   private teacherId: number;
+  private absenses: number;
+  private presences: number;
 
-  constructor ({ name, code, classRoomId, quitDate, periodId, courseId, teacherId}: {
+  constructor ({
+    absenses,
+    name,
+    code,
+    classRoomCode,
+    classRoomId,
+    quitDate,
+    periodId,
+    presences,
+    courseId,
+    teacherName,
+    teacherId,
+  }: {
+    absenses?: number,
     name: string,
     code: string,
-    classRoomId: number,
-    quitDate: Date,
-    periodId: number,
-    courseId: number,
-    teacherId: number,
+    classRoomCode?: string,
+    classRoomId?: number,
+    quitDate?: Date,
+    periodId?: number,
+    presences?: number,
+    courseId?: number,
+    teacherName?: string,
+    teacherId?: number,
   }) {
+    this.absenses = absenses;
     this.name = name;
     this.code = code;
     this.classRoomId = classRoomId;
-    this.quitDate = quitDate;
+    this.classRoomCode = classRoomCode;
+    this.quitDate = quitDate || new Date(0);
     this.periodId = periodId;
     this.courseId = courseId;
+    this.presences = presences;
     this.teacherId = teacherId;
+    this.teacherName = teacherName;
+  }
+
+  public setClassRoomCode (classRoomCode: string): void {
+    this.classRoomCode = classRoomCode;
+  }
+
+  public getClassRoomCode (): string {
+    return this.classRoomCode;
+  }
+
+  public setTeacherName (teacherName: string): void {
+    this.teacherName = teacherName;
+  }
+
+  public getTeacherName (): string {
+    return this.teacherName;
+  }
+
+  public setAbsenses (absenses: number): void {
+    this.absenses = absenses;
+  }
+
+  public getAbsenses (): number {
+    return this.absenses;
+  }
+
+  public setPresences (presences: number): void {
+    this.presences = presences;
+  }
+
+  public getPresences (): number {
+    return this.presences;
   }
 
   public setName (name: string): void {

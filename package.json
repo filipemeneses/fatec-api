@@ -1,6 +1,6 @@
 {
   "name": "fatec-api",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Fatec API",
   "main": "dist/fatec-api.min.js",
   "types": "dist/index.d.ts",

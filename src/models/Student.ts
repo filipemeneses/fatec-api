@@ -1,5 +1,5 @@
-import Discipline from 'models/Discipline';
-import Evaluation from 'models/Evaluation';
+import Discipline from "models/Discipline";
+import Evaluation from "models/Evaluation";
 
 enum EmailIntegrations {
   fatec,
@@ -11,6 +11,11 @@ enum EmailIntegrations {
 interface IRegisteredEmail {
   email: string;
   integrations: EmailIntegrations[];
+}
+
+interface IAttendance {
+  absenses: number;
+  presences: number;
 }
 
 interface IPartialGrade {
@@ -26,6 +31,11 @@ export default class Student {
   private name: string;
   private registeredEmails: IRegisteredEmail[];
   private partialGrades: IPartialGrade[];
+  private enrolledDisciplines: Discipline[] = [];
+
+  public isEnrolledAtDiscipline (discipline: Discipline): boolean {
+    return this.enrolledDisciplines.filter((_discipline) => _discipline.getCode() === discipline.getCode()).length > 0;
+  }
 
   public setName (name: string): void {
     this.name = name;
@@ -49,6 +59,32 @@ export default class Student {
 
   public getPartialGrades (): IPartialGrade[] {
     return this.partialGrades;
+  }
+
+  public setEnrolledDisciplines (disciplines: Discipline[]): void {
+    disciplines.forEach((discipline) => this.setEnrolledDiscipline(discipline));
+  }
+
+  public setEnrolledDiscipline (discipline: Discipline): void {
+    if (this.isEnrolledAtDiscipline(discipline)) {
+      this.updateDiscipline(discipline);
+    } else {
+      this.enrolledDisciplines.push(discipline);
+    }
+  }
+
+  public getEnrolledDisciplineIndexByCode (code: string): number {
+    return this.enrolledDisciplines.indexOf(this.enrolledDisciplines.filter((d) => d.getCode() === code)[0]);
+  }
+
+  public getEnrolledDisciplines (): Discipline[] {
+    return this.enrolledDisciplines;
+  }
+
+  private updateDiscipline (discipline: Discipline) {
+    const index = this.getEnrolledDisciplineIndexByCode(discipline.getCode());
+    this.enrolledDisciplines[index] = Object.assign(this.enrolledDisciplines[index],
+                                      JSON.parse(JSON.stringify(discipline)));
   }
 
 }
