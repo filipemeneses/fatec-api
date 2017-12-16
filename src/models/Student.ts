@@ -19,7 +19,6 @@ interface IAttendance {
 }
 
 interface IPartialGrade {
-  approved: boolean;
   finalScore: number;
   frequency: number;
   discipline: Discipline;
@@ -48,6 +47,11 @@ interface IHistoryEntry {
   observation: string;
 }
 
+interface ISchoolGradeEntry {
+  number: number;
+  disciplines: Discipline[];
+}
+
 export default class Student {
 
   private name: string;
@@ -56,9 +60,18 @@ export default class Student {
   private enrolledDisciplines: Discipline[] = [];
   private schedules: ISchedule[];
   private history: IHistoryEntry[];
+  private schoolGrade: ISchoolGradeEntry[];
 
   public isEnrolledAtDiscipline (discipline: Discipline): boolean {
     return this.enrolledDisciplines.filter((_discipline) => _discipline.getCode() === discipline.getCode()).length > 0;
+  }
+
+  public setSchoolGrade (schoolGrade: ISchoolGradeEntry[]): void {
+    this.schoolGrade = schoolGrade;
+  }
+
+  public getSchoolGrade (): ISchoolGradeEntry[] {
+    return this.schoolGrade;
   }
 
   public setHistory (history: IHistoryEntry[]): void {

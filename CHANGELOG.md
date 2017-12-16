@@ -1,3 +1,8 @@
+### 0.7.0 (2017-12-16)
+
+- Added `state` to `Discipline`
+- Solving #6 by adding school grade method scrapper
+
 ### 0.6.0 (2017-12-16)
 
 - Solving #5 by adding complete history method scrapper

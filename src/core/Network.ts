@@ -11,6 +11,7 @@ export default class Network {
     PARTIAL_ABSENSES: "/aluno/faltasparciais.aspx",
     PARTIAL_GRADES: "/aluno/notasparciais.aspx",
     SCHEDULE: "/aluno/horario.aspx",
+    SCHOOL_GRADE: "/aluno/historicograde.aspx",
   };
   public static readonly STATUS = {
     REDIRECT: 303,

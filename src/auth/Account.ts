@@ -67,6 +67,62 @@ export default class Account {
     });
   }
 
+  public getSchoolGrade (): Promise<string> {
+    return Network.scrap({
+      cookie: this.cookie,
+      route: Network.ROUTES.SCHOOL_GRADE,
+      scrapper: ($) => {
+        const history = $("#TABLE1 table [valign=TOP]").map((i, el) => {
+          const item: any = {
+            disciplines: [],
+          };
+          item.number = i + 1;
+          item.disciplines = $(el).find(":scope div").map((_, div) => {
+            const $discipline = $(div);
+            const data = $discipline.find("tr td").map((__i, td) => {
+              const $td = $(td);
+              const str = $td.text().trim();
+              if (str.indexOf("NF:") > -1) {
+                return [
+                  $td.contents().not($td.children()).text(),
+                ].concat($td.find("b").map((___i, b) => $(b).text().trim()).get());
+              }
+              return str;
+            }).get();
+
+            const stateCodes = {
+              "#418a58": "dismissed",
+              "#75fa9f": "approved",
+              "#b2d4fd": "attending",
+              "#ffffff": "not-attended",
+            };
+
+            const state: any = stateCodes[$discipline.css("background-color").toLowerCase()];
+            const discipline: any = {
+              classHours: Parser.strNumber(data[1].replace("AS:", "")),
+              code: data[0],
+              name: data[2],
+              state,
+            };
+
+            if (data.length > 3) {
+              discipline.period = data[6];
+              discipline.frequency = Parser.strNumber(data[5]);
+              discipline.grade = Parser.strNumber(data[4]);
+            }
+
+            return new Discipline(discipline);
+          }).get();
+
+          return item;
+        }).get();
+
+        this.student.setSchoolGrade(history);
+        return this.student.getSchoolGrade();
+      },
+    });
+  }
+
   public getHistory (): Promise<string> {
     return Network.scrap({
       cookie: this.cookie,
@@ -75,13 +131,24 @@ export default class Account {
         const data = JSON.parse($("[name=Grid1ContainerDataV]").attr("value"));
         const approvedCheckboxStr = "Resources/checkTrue.png";
         this.student.setHistory(data.map((entry) => {
+          const discipline: any = {code: entry[0], name: entry[1]};
+          const observation = entry[7];
+
+          if (entry[3] === approvedCheckboxStr) {
+            discipline.state = "approved";
+          } else if (observation === "Em Curso") {
+            discipline.state = "attending";
+          } else {
+            discipline.state = "not-attended";
+          }
+
           return {
             absenses: Parser.strNumber(entry[6]),
-            approved: entry[3] === approvedCheckboxStr,
-            discipline: new Discipline({code: entry[0], name: entry[1]}),
+            approved: discipline.state === "approved",
+            discipline: new Discipline(discipline),
             frequency: Parser.strNumber(entry[5]),
             grade: Parser.strNumber(entry[4]),
-            observation: entry[7],
+            observation,
             period: entry[2],
           };
         }));
@@ -173,8 +240,20 @@ export default class Account {
         let data = $("[name=GXState]").val();
         data = JSON.parse(data.replace(/\\>/g, "&gt")).Acd_alunonotasparciais_sdt;
         this.student.setPartialGrades(data.map((line) => {
+          let disciplineState;
+          const approved: boolean = Parser.nBoolean(line["ACD_AlunoHistoricoItemAprovada"]);
+          const quited: boolean = +Parser.strDate(line["ACD_AlunoHistoricoItemDesistenciaData"]) !== 0;
+
+          if (quited) {
+            disciplineState = "quited";
+          } else if (approved) {
+            disciplineState = "approved";
+          } else {
+            disciplineState = "attending";
+          }
+
           return {
-            approved: Parser.nBoolean(line["ACD_AlunoHistoricoItemAprovada"]),
+            approved,
             discipline: new Discipline({
               classroomId: line["ACD_AlunoHistoricoItemTurmaId"],
               code: line["ACD_DisciplinaSigla"],
@@ -182,6 +261,7 @@ export default class Account {
               name: line["ACD_DisciplinaNome"],
               periodId: line["ACD_Periodoid"],
               quitDate: Parser.strDate(line["ACD_AlunoHistoricoItemDesistenciaData"]),
+              state: disciplineState,
               teacherId: line["ACD_AlunoHistoricoItemProfessorId"],
             }),
             evaluations: line["Avaliacoes"].map((evaluation) => {

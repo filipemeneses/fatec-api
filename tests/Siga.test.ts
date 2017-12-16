@@ -258,4 +258,27 @@ describe("siga", () => {
       expect(data).to.be.an("array");
     });
   });
+  describe("school grade", () => {
+    let $schoolGrade: any = null;
+
+    before((done) => {
+      Network.get({
+        cookie, route: Network.ROUTES.SCHOOL_GRADE,
+      }).then((html) => cheerio.load(html))
+      .then(($) => {
+        $schoolGrade = $;
+        done();
+      }).catch((error) => done(error));
+    });
+
+    it("should have the school grade semesters tags", () => {
+      const $semesters = $schoolGrade("#TABLE1 table [valign=TOP]");
+      const disciplines = $semesters.find("div");
+      const data = $schoolGrade(disciplines[0]).find("tr td");
+
+      expect($semesters.length > 4).to.equal(true);
+      expect(disciplines.length >= 5 * 6).to.equal(true);
+      expect(data.length > 1).to.equal(true);
+    });
+  });
 });

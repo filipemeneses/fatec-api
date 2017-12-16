@@ -1,3 +1,11 @@
+enum DisciplineState {
+  approved = "approved",
+  notAttended = "not-attended",
+  attending = "attending",
+  dismissed = "dismissed",
+  quited = "quited",
+}
+
 export default class Discipline {
 
   private name: string;
@@ -8,10 +16,13 @@ export default class Discipline {
   private quitDate: Date;
   private periodId: number;
   private courseId: number;
+  private grade: number;
   private teacherName: string;
   private teacherId: number;
   private absenses: number;
   private presences: number;
+  private classHours: number;
+  private state: DisciplineState;
 
   constructor ({
     absenses,
@@ -19,10 +30,13 @@ export default class Discipline {
     code,
     classroomCode,
     classroomId,
+    classHours,
+    grade,
     quitDate,
     periodId,
     presences,
     courseId,
+    state,
     teacherName,
     teacherId,
   }: {
@@ -31,10 +45,13 @@ export default class Discipline {
     code: string,
     classroomCode?: string,
     classroomId?: number,
+    classHours?: number,
+    grade?: number,
     quitDate?: Date,
     periodId?: number,
     presences?: number,
     courseId?: number,
+    state?: DisciplineState,
     teacherName?: string,
     teacherId?: number,
   }) {
@@ -43,12 +60,30 @@ export default class Discipline {
     this.code = code;
     this.classroomId = classroomId;
     this.classroomCode = classroomCode;
+    this.grade = grade;
     this.quitDate = quitDate || new Date(0);
     this.periodId = periodId;
     this.courseId = courseId;
     this.presences = presences;
+    this.state = state;
     this.teacherId = teacherId;
     this.teacherName = teacherName;
+  }
+
+  public setGrade (grade: number): void {
+    this.grade = grade;
+  }
+
+  public getGrade (): number {
+    return this.grade;
+  }
+
+  public setState (state: DisciplineState): void {
+    this.state = state;
+  }
+
+  public getState (state): DisciplineState {
+    return this.state;
   }
 
   public setclassroomCode (classroomCode: string): void {

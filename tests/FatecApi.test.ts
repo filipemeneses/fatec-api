@@ -19,6 +19,15 @@ describe("fatec-api", () => {
   let getNameDelay = 0;
 
   describe("account", () => {
+    // Continue later when SIGA breaks
+    // it("should show SIGA's error case errors", () => {
+    //   return account.login().catch((message) => {
+    //     expect(message).to.be.a("string");
+    //     console.error(message);
+    //     process.exit();
+    //   });
+    // });
+
     it("should login", () => {
       return account.login().then(() => {
         expect(account.isLogged()).equal(true);
@@ -163,6 +172,22 @@ describe("fatec-api", () => {
         }
       });
     });
+    it("should have school grade", () => {
+      return account.getSchoolGrade().then((schoolGrade) => {
+        if (schoolGrade.length) {
+          for (const semester of schoolGrade) {
+            expect(semester).to.have.property("number");
+            expect(semester).to.have.property("disciplines");
+            expect(semester.number).to.be.a("number");
+            if (semester.disciplines.length) {
+              for (const discipline of semester.disciplines) {
+                expect(discipline).to.be.instanceOf(Discipline);
+              }
+            }
+          }
+        }
+      });
+    });
   });
   describe("student", () => {
     it("should get name", () => {
@@ -299,6 +324,19 @@ describe("fatec-api", () => {
           expect(entry.absenses).to.be.a("number");
           expect(entry.approved).to.be.a("boolean");
           expect(entry.observation).to.be.a("string");
+        }
+      }
+    });
+
+    it("should have school grade", () => {
+      const schoolGrade = account.student.getSchoolGrade();
+      for (const semester of schoolGrade) {
+        expect(semester).to.have.property("number");
+        expect(semester).to.have.property("disciplines");
+        if (semester.disciplines.length) {
+          for (const discipline of semester.disciplines) {
+            expect(["approved", "attending", "not-attended", "dismissed"]).to.contain(discipline.getState());
+          }
         }
       }
     });
