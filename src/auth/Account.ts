@@ -67,7 +67,7 @@ export default class Account {
     });
   }
 
-  public getSchoolGrade (): Promise<string> {
+  public getSchoolGrade (): Promise<any> {
     return Network.scrap({
       cookie: this.cookie,
       route: Network.ROUTES.SCHOOL_GRADE,
@@ -123,7 +123,7 @@ export default class Account {
     });
   }
 
-  public getHistory (): Promise<string> {
+  public getHistory (): Promise<any> {
     return Network.scrap({
       cookie: this.cookie,
       route: Network.ROUTES.HISTORY,
@@ -157,7 +157,7 @@ export default class Account {
     });
   }
 
-  public getSchedules (): Promise<string> {
+  public getSchedules (): Promise<any> {
     return Network.scrap({
       cookie: this.cookie,
       route: Network.ROUTES.SCHEDULE,
@@ -195,7 +195,7 @@ export default class Account {
     });
   }
 
-  public getRegisteredEmails (): Promise<object> {
+  public getRegisteredEmails (): Promise<any> {
     if (this.student.getRegisteredEmails()) {
       return Promise.resolve(this.student.getRegisteredEmails());
     }
@@ -228,7 +228,7 @@ export default class Account {
     });
   }
 
-  public getPartialGrades (): Promise<object> {
+  public getPartialGrades (): Promise<any> {
     if (this.student.getPartialGrades()) {
       return Promise.resolve(this.student.getPartialGrades());
     }
@@ -292,7 +292,7 @@ export default class Account {
     });
   }
 
-  public getEnrolledDisciplines (): Promise<object> {
+  public getEnrolledDisciplines (): Promise<any> {
     return Network.scrap({
       cookie: this.cookie,
       route: Network.ROUTES.PARTIAL_ABSENSES,
