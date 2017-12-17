@@ -32,11 +32,12 @@ myAccount.login().then(() => {
 
 This library scrap data using HTTP requests with `request` and parses the HTML with `cheerio` library.
 
-The `Account` class does the heavy lifting. Here's the flow of Account.getName():
+The `auth/Account` class does the heavy lifting, making the requests using `core/Network`. The scrapped data is later available at the attribute `student` of the `auth/Account` instance.
 
-![](https://raw.githubusercontent.com/filipemeneses/fatec-api/master/doc/requests.svg)
+Here's the flow of `account.getName()`:
 
-The scrapped data is later available at `Account.student` on an account instance.
+![](https://cdn.rawgit.com/filipemeneses/fatec-api-doc/cf3a990f/assets/requests.svg)
+
 
 Check out the [documentation](https://filipemeneses.gitbooks.io/fatec-api/) for more info.
 
