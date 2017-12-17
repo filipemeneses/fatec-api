@@ -1,3 +1,7 @@
+#### 0.7.2 (2017-12-17)
+
+- `Account.login()` is no longer mandatory to call other methods
+
 ### 0.7.0 (2017-12-16)
 
 - Added `state` to `Discipline`

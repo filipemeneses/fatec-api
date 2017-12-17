@@ -12,6 +12,21 @@ npm install fatec-api --save
 
 Check the documentation at: https://filipemeneses.gitbooks.io/fatec-api/
 
+## Getting Started
+
+A quick example will show how to use it, scrapping the user name. And will cover the usage with [Node.js](https://nodejs.org/en/) using ES6 syntax.
+
+```js
+const fatecApi = require('fatec-api')
+const myAccount = new fatecApi.Account('LOGIN', 'PASSWORD')
+
+myAccount.login().then(() => {
+  return myAccount.getName().then(name => {
+    console.log(name)
+    // <- 'YOUR FULL NAME WITH CAPSLOCK'
+  })
+})
+```
 
 # How it works
 
@@ -19,7 +34,7 @@ This library scrap data using HTTP requests with `request` and parses the HTML w
 
 The `Account` class does the heavy lifting. Here's the flow of Account.getName():
 
-![](https://filipemeneses.gitbooks.io/fatec-api/content/assets/requests.svg)
+![](https://raw.githubusercontent.com/filipemeneses/fatec-api/master/doc/requests.svg)
 
 The scrapped data is later available at `Account.student` on an account instance.
 
