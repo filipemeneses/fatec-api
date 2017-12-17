@@ -29,9 +29,10 @@ describe("fatec-api", () => {
     // });
 
     it("should login", () => {
-      return account.login().then(() => {
-        expect(account.isLogged()).equal(true);
-        expect(account.cookie.length > 0).equal(true);
+      const anotherInstance = getAccount();
+      return anotherInstance.login().then(() => {
+        expect(anotherInstance.isLogged()).equal(true);
+        expect(anotherInstance.cookie.length > 0).equal(true);
       });
     });
     it("should get name", () => {
