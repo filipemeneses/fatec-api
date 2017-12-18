@@ -1,3 +1,8 @@
+### 0.8.0 (2017-12-18)
+
+- Solving #9 by adding academic calendar method scrapper
+
+
 #### 0.7.2 (2017-12-17)
 
 - `Account.login()` is no longer mandatory to call other methods

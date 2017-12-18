@@ -5,6 +5,7 @@ export default class Network {
 
   public static readonly DOMAIN: string = "https://siga.cps.sp.gov.br";
   public static readonly ROUTES = {
+    ACADEMIC_CALENDAR: "/aluno/alu_alunocalendario.aspx",
     HISTORY: "/aluno/historicocompleto.aspx",
     HOME: "/aluno/home.aspx",
     LOGIN: "/aluno/login.aspx",
@@ -34,7 +35,7 @@ export default class Network {
     }
     return promise.then(() => {
       return Network.get({ cookie, route }).then((html) => {
-        const $ = cheerio.load(html);
+        const $ = cheerio.load(html, { decodeEntities: true });
         const createdAt = +new Date();
         const duration = 1000 * 60 * 5;
         this.scrapperCache[route] = {

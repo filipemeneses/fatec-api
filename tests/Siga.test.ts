@@ -281,4 +281,50 @@ describe("siga", () => {
       expect(data.length > 1).to.equal(true);
     });
   });
+  describe("academic calendar", () => {
+    let $academicCalendar: any = null;
+
+    before((done) => {
+      Network.get({
+        cookie, route: Network.ROUTES.ACADEMIC_CALENDAR,
+      }).then((html) => cheerio.load(html))
+      .then(($) => {
+        $academicCalendar = $;
+        done();
+      }).catch((error) => done(error));
+    });
+
+    it("should have an iframe with the calendar", () => {
+      const tag = $academicCalendar('[name="Embpage1"]');
+      expect(tag).to.have.lengthOf(1);
+      expect(tag.attr("src")).to.be.a("string");
+    });
+
+    it("the iframe should have every month of the year with events data", () => {
+      return Network.get({
+        cookie, route: $academicCalendar('[name="Embpage1"]').attr("src"),
+      }).then((html) => cheerio.load(html))
+      .then(($iframe) => {
+        const months = [
+          "W0002JANEIRO",
+          "W0002FEVEREIRO",
+          "W0002MARCO",
+          "W0002ABRIL",
+          "W0002MAIO",
+          "W0002JUNHO",
+          "W0002JULHO",
+          "W0002AGOSTO",
+          "W0002SETEMBRO",
+          "W0002OUTUBRO",
+          "W0002NOVEMBRO",
+          "W0002DEZEMBRO",
+        ];
+        for (const month of months) {
+          expect($iframe(`#${month}`)).to.have.lengthOf(1);
+          expect($iframe(`#${month} tr:last-of-type font`)).to.have.lengthOf(1);
+        }
+      });
+    });
+
+  });
 });

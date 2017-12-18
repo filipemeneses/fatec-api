@@ -1,3 +1,4 @@
+import Calendar from "models/Calendar";
 import Discipline from "models/Discipline";
 import Evaluation from "models/Evaluation";
 
@@ -61,9 +62,18 @@ export default class Student {
   private schedules: ISchedule[];
   private history: IHistoryEntry[];
   private schoolGrade: ISchoolGradeEntry[];
+  private academicCalendar: Calendar;
 
   public isEnrolledAtDiscipline (discipline: Discipline): boolean {
     return this.enrolledDisciplines.filter((_discipline) => _discipline.getCode() === discipline.getCode()).length > 0;
+  }
+
+  public setAcademicCalendar (calendar: Calendar): void {
+    this.academicCalendar = calendar;
+  }
+
+  public getAcademicCalendar (): Calendar {
+    return this.academicCalendar;
   }
 
   public setSchoolGrade (schoolGrade: ISchoolGradeEntry[]): void {

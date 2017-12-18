@@ -1,5 +1,6 @@
 import Network from "core/Network";
 import Parser from "core/Parser";
+import Calendar from "models/Calendar";
 import Discipline from "models/Discipline";
 import Evaluation from "models/Evaluation";
 import Student from "models/Student";
@@ -66,6 +67,62 @@ export default class Account {
         scrapper: ($) => {
           this.student.setName($("#span_MPW0039vPRO_PESSOALNOME").text());
           return this.student.getName();
+        },
+      });
+    });
+  }
+
+  public getAcademicCalendar (): Promise<any> {
+    const prom = this.checkCookie();
+
+    return prom.then(() => {
+      return Network.scrap({
+        cookie: this.cookie,
+        route: Network.ROUTES.ACADEMIC_CALENDAR,
+        scrapper: ($$) => {
+          return Network.scrap({
+            cookie: this.cookie,
+            route: $$('[name="Embpage1"]').attr("src"),
+            scrapper: ($) => {
+              const thisYear = (new Date()).getFullYear();
+              const months = [
+                "W0002JANEIRO",
+                "W0002FEVEREIRO",
+                "W0002MARCO",
+                "W0002ABRIL",
+                "W0002MAIO",
+                "W0002JUNHO",
+                "W0002JULHO",
+                "W0002AGOSTO",
+                "W0002SETEMBRO",
+                "W0002OUTUBRO",
+                "W0002NOVEMBRO",
+                "W0002DEZEMBRO",
+              ];
+              const calendar = months.map((month, monthIndex) => {
+                let events = $(`#${month} tr:last-of-type font`).contents();
+                events = events.map((i, e) => e.data).get();
+                return {
+                  events: events.reduce((_events, event) => {
+                    event = event.trim();
+                    if (event.length) {
+                      event = event.split("-");
+                      event = {
+                        date: new Date(thisYear, monthIndex, Parser.strNumber(event[0])),
+                        name: event[1].trim(),
+                        reason: event[2].trim(),
+                      };
+                      _events.push(event);
+                    }
+                    return _events;
+                  }, []),
+                };
+              });
+
+              this.student.setAcademicCalendar(new Calendar(calendar));
+              return this.student.getAcademicCalendar();
+            },
+          });
         },
       });
     });

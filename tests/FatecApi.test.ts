@@ -189,6 +189,27 @@ describe("fatec-api", () => {
         }
       });
     });
+    it("should have academic calendar", () => {
+      return account.getAcademicCalendar().then((calendar) => {
+        if (calendar.length) {
+          expect(calendar.length).to.equal(12);
+          for (const month of calendar) {
+            expect(month).to.be.an("object");
+            expect(month).to.have.property("holidays");
+            expect(month.holidays).to.be.an("array");
+
+            if (month.holidays.length) {
+              for (const holiday of month.holidays) {
+                expect(holiday).to.have.property("event");
+                expect(holiday).to.have.property("reason");
+                expect(holiday.event).to.be.a("string");
+                expect(holiday.reason).to.be.a("string");
+              }
+            }
+          }
+        }
+      });
+    });
   });
   describe("student", () => {
     it("should get name", () => {
@@ -337,6 +358,27 @@ describe("fatec-api", () => {
         if (semester.disciplines.length) {
           for (const discipline of semester.disciplines) {
             expect(["approved", "attending", "not-attended", "dismissed"]).to.contain(discipline.getState());
+          }
+        }
+      }
+    });
+
+    it("should have academic calendar", () => {
+      const calendar = account.student.getAcademicCalendar();
+      if (calendar.length) {
+        expect(calendar.length).to.equal(12);
+        for (const month of calendar) {
+          expect(month).to.be.an("object");
+          expect(month).to.have.property("holidays");
+          expect(month.holidays).to.be.an("array");
+
+          if (month.holidays.length) {
+            for (const holiday of month.holidays) {
+              expect(holiday).to.have.property("event");
+              expect(holiday).to.have.property("reason");
+              expect(holiday.event).to.be.a("string");
+              expect(holiday.reason).to.be.a("string");
+            }
           }
         }
       }
