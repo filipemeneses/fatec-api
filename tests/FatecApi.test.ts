@@ -42,6 +42,30 @@ describe("fatec-api", () => {
         expect(name).equal(process.env.NAME);
       });
     });
+    it("should get profile", () => {
+      return account.getProfile().then((profile) => {
+        expect(profile).to.have.property("name");
+        expect(profile).to.have.property("averageGrade");
+        expect(profile).to.have.property("progress");
+        expect(profile).to.have.property("course");
+        expect(profile).to.have.property("unit");
+        expect(profile).to.have.property("period");
+        expect(profile).to.have.property("code");
+        expect(profile).to.have.property("cpf");
+        expect(profile).to.have.property("birthday");
+        expect(profile).to.have.property("email");
+        expect(profile.name).to.be.a("string");
+        expect(profile.averageGrade).to.be.a("number");
+        expect(profile.progress).to.be.a("number");
+        expect(profile.course).to.be.a("string");
+        expect(profile.unit).to.be.a("string");
+        expect(profile.period).to.be.a("string");
+        expect(profile.code).to.be.a("string");
+        expect(profile.cpf).to.be.a("string");
+        expect(profile.birthday).to.be.instanceof(Date);
+        expect(profile.email).to.be.a("string");
+      });
+    });
     it("should get cached name", () => {
       let cachedDelay = +new Date();
       return account.getName().then((name) => {
@@ -215,6 +239,24 @@ describe("fatec-api", () => {
     it("should get name", () => {
       const name = account.student.getName();
       expect(name).equal(process.env.NAME);
+    });
+
+    it("should get profile", () => {
+      const profile = account.student.getProfile();
+      expect(profile).to.have.property("name");
+      expect(profile).to.have.property("averageGrade");
+      expect(profile).to.have.property("progress");
+      expect(profile).to.have.property("course");
+      expect(profile).to.have.property("unit");
+      expect(profile).to.have.property("period");
+      expect(profile).to.have.property("code");
+      expect(profile.name).to.be.a("string");
+      expect(profile.averageGrade).to.be.a("number");
+      expect(profile.progress).to.be.a("number");
+      expect(profile.course).to.be.a("string");
+      expect(profile.unit).to.be.a("string");
+      expect(profile.period).to.be.a("string");
+      expect(profile.code).to.be.a("string");
     });
 
     it("should get registeredEmails", () => {

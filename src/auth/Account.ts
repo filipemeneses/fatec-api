@@ -72,6 +72,40 @@ export default class Account {
     });
   }
 
+  public getProfile (): Promise<string> {
+    const prom = this.checkCookie();
+
+    return prom.then(() => {
+      return Network.scrap({
+        cookie: this.cookie,
+        route: Network.ROUTES.HOME,
+        scrapper: ($) => {
+          const data = Parser.parseGxState($("[name=GXState]").val());
+          const profile: any = {
+            averageGrade: Parser.strNumber(data["MPW0039vACD_ALUNOCURSOINDICEPR"]),
+            code: data["MPW0039vACD_ALUNOCURSOREGISTROACADEMICOCURSO"],
+            course: data["vACD_CURSONOME_MPAGE"],
+            name: data["MPW0039vPRO_PESSOALNOME"],
+            period: data["vACD_PERIODODESCRICAO_MPAGE"],
+            progress: Parser.strNumber(data["MPW0039vACD_ALUNOCURSOINDICEPP"]),
+            unit: data["vUNI_UNIDADENOME_MPAGE"],
+          };
+          return Network.scrap({
+            cookie: this.cookie,
+            route: Network.ROUTES.EXCHANGE_PROGRAMS,
+            scrapper: ($exchange) => {
+              profile.email = $exchange("#span_vPRO_PESSOALEMAIL").text();
+              profile.cpf = $exchange("#span_vPRO_PESSOALDOCSCPF").text();
+              profile.birthday = Parser.strDate($exchange("#span_vPRO_PESSOALDATANASCIMENTO").text());
+              this.student.setProfile(profile);
+              return this.student.getProfile();
+            },
+          });
+        },
+      });
+    });
+  }
+
   public getAcademicCalendar (): Promise<any> {
     const prom = this.checkCookie();
 

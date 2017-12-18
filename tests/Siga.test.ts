@@ -36,6 +36,8 @@ describe("siga", () => {
   });
   describe("home", () => {
     let $home: any = null;
+    let data: any = null;
+
     before((done) => {
       Network.get({
         cookie, route: Network.ROUTES.HOME,
@@ -45,30 +47,29 @@ describe("siga", () => {
         done();
       }).catch((error) => done(error));
     });
-    it("should have summary student info: name", () => {
-      const tag = $home("#span_MPW0039vPRO_PESSOALNOME");
+
+    it("should have a JSON with grades", () => {
+      const tag = $home("[name=GXState]");
+      data = $home("[name=GXState]").val();
       expect(tag).to.have.lengthOf(1);
-      expect(tag.text()).to.be.a("string");
-    });
-    it("should have summary student info: PP", () => {
-      const tag = $home("#span_MPW0039vACD_ALUNOCURSOREGISTROACADEMICOCURSO");
-      expect(tag).to.have.lengthOf(1);
-      expect(tag.text()).to.be.a("string");
-    });
-    it("should have summary student info: PR", () => {
-      const tag = $home("#span_MPW0039vACD_ALUNOCURSOREGISTROACADEMICOCURSO");
-      expect(tag).to.have.lengthOf(1);
-      expect(tag.text()).to.be.a("string");
-    });
-    it("should have summary student info: profile image", () => {
-      const tag = $home("#MPW0039FOTO");
-      expect(tag).to.have.lengthOf(1);
-      expect(tag.text()).to.be.a("string");
-    });
-    it("should have summary student info: RA", () => {
-      const tag = $home("#span_MPW0039vACD_ALUNOCURSOREGISTROACADEMICOCURSO");
-      expect(tag).to.have.lengthOf(1);
-      expect(tag.text()).to.be.a("string");
+      expect(data).to.be.a("string");
+      data = Parser.parseGxState(data);
+      expect(data).to.have.property("MPW0039vPRO_PESSOALNOME");
+      expect(data).to.have.property("MPW0039vMAX_ACD_ALUNOCURSOINDICEPR");
+      expect(data).to.have.property("MPW0039vACD_ALUNOCURSOINDICEPR");
+      expect(data).to.have.property("MPW0039vACD_ALUNOCURSOINDICEPP");
+      expect(data).to.have.property("vACD_CURSONOME_MPAGE");
+      expect(data).to.have.property("vUNI_UNIDADENOME_MPAGE");
+      expect(data).to.have.property("vACD_PERIODODESCRICAO_MPAGE");
+      expect(data).to.have.property("MPW0039vACD_ALUNOCURSOREGISTROACADEMICOCURSO");
+      return Network.get({
+        cookie, route: Network.ROUTES.EXCHANGE_PROGRAMS,
+      }).then((html) => cheerio.load(html))
+      .then(($exchange) => {
+        expect($exchange("#span_vPRO_PESSOALEMAIL")).to.have.lengthOf(1);
+        expect($exchange("#span_vPRO_PESSOALDOCSCPF")).to.have.lengthOf(1);
+        expect($exchange("#span_vPRO_PESSOALDATANASCIMENTO")).to.have.lengthOf(1);
+      });
     });
     it("should have an iframe with registered emails", () => {
       const tag = $home('[name="Embpage1"]');

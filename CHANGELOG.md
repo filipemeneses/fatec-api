@@ -1,3 +1,7 @@
+### 0.9.0 (2017-12-18)
+
+- Adding profile method scrapper
+
 ### 0.8.0 (2017-12-18)
 
 - Solving #9 by adding academic calendar method scrapper

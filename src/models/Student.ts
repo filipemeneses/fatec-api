@@ -53,9 +53,32 @@ interface ISchoolGradeEntry {
   disciplines: Discipline[];
 }
 
+interface IProfile {
+  averageGrade: number;
+  birthday: Date;
+  code: string;
+  course: string;
+  cpf: string;
+  email: string;
+  name: string;
+  period: string;
+  progress: number;
+  unit: string;
+}
+
 export default class Student {
 
+  private averageGrade: number;
   private name: string;
+  private birthday: Date;
+  private code: string;
+  private course: string;
+  private cpf: string;
+  private email: string;
+  private period: string;
+  private progress: number;
+  private unit: string;
+
   private registeredEmails: IRegisteredEmail[];
   private partialGrades: IPartialGrade[];
   private enrolledDisciplines: Discipline[] = [];
@@ -66,6 +89,34 @@ export default class Student {
 
   public isEnrolledAtDiscipline (discipline: Discipline): boolean {
     return this.enrolledDisciplines.filter((_discipline) => _discipline.getCode() === discipline.getCode()).length > 0;
+  }
+
+  public setProfile (profile: IProfile): void {
+    this.averageGrade = profile.averageGrade;
+    this.birthday = profile.birthday;
+    this.code = profile.code;
+    this.course = profile.course;
+    this.cpf = profile.cpf;
+    this.email = profile.email;
+    this.name = profile.name;
+    this.period = profile.period;
+    this.progress = profile.progress;
+    this.unit = profile.unit;
+  }
+
+  public getProfile (): IProfile {
+    return {
+      averageGrade: this.averageGrade,
+      birthday: this.birthday,
+      code: this.code,
+      course: this.course,
+      cpf: this.cpf,
+      email: this.email,
+      name: this.name,
+      period: this.period,
+      progress: this.progress,
+      unit: this.unit,
+    };
   }
 
   public setAcademicCalendar (calendar: Calendar): void {

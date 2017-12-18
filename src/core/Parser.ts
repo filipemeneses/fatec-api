@@ -1,6 +1,9 @@
 export default class Parser {
 
   public static strDate (date: string): any {
+    if (date.indexOf("/") === 2) {
+      return new Date(date.split("/").reverse().join("-") + " 00:00:00");
+    }
     const nullDate = /(0{4})-(0{2})-(0{2})(T(0{2}):(0{2}):(0{2}))?/;
     if (nullDate.test(date)) {
       return new Date(0);

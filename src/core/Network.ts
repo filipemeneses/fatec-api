@@ -6,6 +6,7 @@ export default class Network {
   public static readonly DOMAIN: string = "https://siga.cps.sp.gov.br";
   public static readonly ROUTES = {
     ACADEMIC_CALENDAR: "/aluno/alu_alunocalendario.aspx",
+    EXCHANGE_PROGRAMS: "/aluno/intercambio.aspx",
     HISTORY: "/aluno/historicocompleto.aspx",
     HOME: "/aluno/home.aspx",
     LOGIN: "/aluno/login.aspx",
