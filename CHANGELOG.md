@@ -1,3 +1,17 @@
+## 1.0.0 (2017-12-20)
+
+- Added `History`
+- Added `Schedule`
+- Added `SchoolGrade`
+- `account.login()` will throw error if credentials are wrong or any other SIGA's error
+- `account.getSchoolGrade()` returns `SchoolGrade` instance now
+- `account.getHistory()` returns `History` instance now
+- `account.setSchedules()` changed the return JSON and `startAt`, `endAt` date are relative to the current day
+- `account.getPartialGrades()` removed `approved` attribute and added to `discipline` instance
+- Added state checks to `Discipline` class and some missing getters/setters
+- Changed `account.setclassroomCode` to `account.setClassroomCode`
+
+
 ### 0.9.0 (2017-12-18)
 
 - Adding profile method scrapper
