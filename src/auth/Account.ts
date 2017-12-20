@@ -1,8 +1,12 @@
+import * as cheerio from "cheerio";
 import Network from "core/Network";
 import Parser from "core/Parser";
 import Calendar from "models/Calendar";
 import Discipline from "models/Discipline";
 import Evaluation from "models/Evaluation";
+import History from "models/History";
+import Schedule from "models/Schedule";
+import SchoolGrade from "models/SchoolGrade";
 import Student from "models/Student";
 
 export default class Account {
@@ -37,23 +41,31 @@ export default class Account {
     return this.state === Account.STATES.IDLE;
   }
 
-  public login (): Promise<void> {
+  public login (): Promise<any> {
     return Network.post({
       form: {
         vSIS_USUARIOID: this.username,
         vSIS_USUARIOSENHA: this.password,
       },
       route: Network.ROUTES.LOGIN,
-    }).then((res) => {
-      // No redirect means no login
-      this.state = Account.STATES.DENIED;
-    }).catch((err) => {
+    })
+    .catch((err) => {
       if (err.statusCode === Network.STATUS.REDIRECT) {
         this.state = Account.STATES.LOGGED;
         this.cookie = Network.getCookieFromResponse(err.response);
       } else {
         this.state = Account.STATES.DENIED;
       }
+    })
+    .then((html) => {
+      // No HTML code means got redirected therefore logged in
+      if (!html) {
+        return;
+      }
+
+      this.state = Account.STATES.DENIED;
+      const $ = cheerio.load(html);
+      return Promise.reject(new Error($(".ErrorViewer").map((i, e) => $(e).text()).get().join("\n")));
     });
   }
 
@@ -170,10 +182,8 @@ export default class Account {
         cookie: this.cookie,
         route: Network.ROUTES.SCHOOL_GRADE,
         scrapper: ($) => {
-          const history = $("#TABLE1 table [valign=TOP]").map((i, el) => {
-            const item: any = {
-              disciplines: [],
-            };
+          const semesters = $("#TABLE1 table [valign=TOP]").map((i, el) => {
+            const item: any = {};
             item.number = i + 1;
             item.disciplines = $(el).find(":scope div").map((_, div) => {
               const $discipline = $(div);
@@ -215,7 +225,7 @@ export default class Account {
             return item;
           }).get();
 
-          this.student.setSchoolGrade(history);
+          this.student.setSchoolGrade(new SchoolGrade(semesters));
           return this.student.getSchoolGrade();
         },
       });
@@ -232,7 +242,7 @@ export default class Account {
         scrapper: ($) => {
           const data = JSON.parse($("[name=Grid1ContainerDataV]").attr("value"));
           const approvedCheckboxStr = "Resources/checkTrue.png";
-          this.student.setHistory(data.map((entry) => {
+          const entries = data.map((entry) => {
             const discipline: any = {code: entry[0], name: entry[1]};
             const observation = entry[7];
 
@@ -243,17 +253,18 @@ export default class Account {
             } else {
               discipline.state = "not-attended";
             }
+            discipline.approved = discipline.state === "approved";
+            discipline.absenses = Parser.strNumber(entry[6]);
+            discipline.frequency = Parser.strNumber(entry[5]);
+            discipline.grade = Parser.strNumber(entry[4]);
+            discipline.period = entry[2];
 
             return {
-              absenses: Parser.strNumber(entry[6]),
-              approved: discipline.state === "approved",
               discipline: new Discipline(discipline),
-              frequency: Parser.strNumber(entry[5]),
-              grade: Parser.strNumber(entry[4]),
               observation,
-              period: entry[2],
             };
-          }));
+          });
+          this.student.setHistory(new History(entries));
           return this.student.getHistory();
         },
       });
@@ -276,26 +287,50 @@ export default class Account {
             "[name='Grid6ContainerDataV']",
             "[name='Grid7ContainerDataV']",
           ];
-
-          this.student.setSchedules(tags.map((tag, index) => {
+          const schedules = tags.map((tag, index) => {
             const data = JSON.parse($(tag).attr("value"));
 
             return {
               periods: data.map((period) => {
                 let [startAt, endAt] = period[1].split("-");
-                startAt = `0000-01-01 ${startAt}:00`;
-                endAt = `0000-01-01 ${endAt}:00`;
+                const now = new Date();
+                const periodTime = new Date();
 
-                return {
-                  classroomCode: period[3],
-                  discipline: this.student.getEnrolledDisciplineByCode(period[2]) || new Discipline({code: period[2]}),
-                  endAt: Parser.strDate(endAt),
-                  startAt: Parser.strDate(startAt),
-                };
+                now.setMilliseconds(0);
+                now.setSeconds(0);
+                periodTime.setMilliseconds(0);
+                periodTime.setSeconds(0);
+                const [startHours, startMinutes] = startAt.split(":");
+                const [endHours, endMinutes] = endAt.split(":");
+                const weekday = index + 1;
+                const isSameWeekday = now.getDay() === weekday;
+
+                periodTime.setMinutes(parseInt(startMinutes));
+                periodTime.setHours(parseInt(startHours));
+
+                if ((isSameWeekday && +now > +periodTime) || (now.getDay() > weekday)) {
+                  now.setDate(now.getDate() + 7);
+                } else {
+                  now.setDate(now.getDate() + (weekday - now.getDay()));
+                }
+
+                startAt = new Date(+now);
+                startAt.setMinutes(parseInt(startMinutes));
+                startAt.setHours(parseInt(startHours));
+
+                endAt = new Date(+now);
+                endAt.setMinutes(parseInt(endMinutes));
+                endAt.setHours(parseInt(endHours));
+
+                const discipline = new Discipline({code: period[2], classroomCode: period[3]});
+
+                return { discipline, endAt, startAt };
               }),
               weekday: index + 1,
             };
-          }));
+          });
+
+          this.student.setSchedules(schedules.map((s) => new Schedule(s)));
           return this.student.getSchedules();
         },
       });
@@ -360,18 +395,21 @@ export default class Account {
               disciplineState = "attending";
             }
 
+            const discipline = new Discipline({
+              classroomId: line["ACD_AlunoHistoricoItemTurmaId"],
+              code: line["ACD_DisciplinaSigla"],
+              courseId: line["ACD_CursoId"],
+              frequency: line["ACD_AlunoHistoricoItemFrequencia"],
+              grade: line["ACD_AlunoHistoricoItemMediaFinal"],
+              name: line["ACD_DisciplinaNome"],
+              periodId: line["ACD_Periodoid"],
+              quitDate: Parser.strDate(line["ACD_AlunoHistoricoItemDesistenciaData"]),
+              state: disciplineState,
+              teacherId: line["ACD_AlunoHistoricoItemProfessorId"],
+            });
+
             return {
-              approved,
-              discipline: new Discipline({
-                classroomId: line["ACD_AlunoHistoricoItemTurmaId"],
-                code: line["ACD_DisciplinaSigla"],
-                courseId: line["ACD_CursoId"],
-                name: line["ACD_DisciplinaNome"],
-                periodId: line["ACD_Periodoid"],
-                quitDate: Parser.strDate(line["ACD_AlunoHistoricoItemDesistenciaData"]),
-                state: disciplineState,
-                teacherId: line["ACD_AlunoHistoricoItemProfessorId"],
-              }),
+              discipline,
               evaluations: line["Avaliacoes"].map((evaluation) => {
                 return new Evaluation({
                   applyDates: {
@@ -391,8 +429,6 @@ export default class Account {
                   weight: Parser.strNumber(evaluation["ACD_PlanoEnsinoAvaliacaoPeso"]),
                 });
               }),
-              finalScore: line["ACD_AlunoHistoricoItemMediaFinal"],
-              frequency: line["ACD_AlunoHistoricoItemFrequencia"],
             };
           }));
           return this.student.getPartialGrades();

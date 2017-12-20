@@ -1,7 +1,11 @@
 import * as chai from "chai";
 import * as mocha from "mocha";
+
+import Calendar from "models/Calendar";
 import Discipline from "models/Discipline";
 import Evaluation from "models/Evaluation";
+import History from "models/History";
+import SchoolGrade from "models/SchoolGrade";
 
 import {getAccount} from "./helpers.js";
 
@@ -18,15 +22,16 @@ describe("fatec-api", () => {
   let accountDisciplines = [];
   let getNameDelay = 0;
 
+  before((done) => {
+    account.login().then(() => {
+      done();
+    }).catch((message) => {
+      console.error(message.stack);
+      done(message);
+    });
+  });
+
   describe("account", () => {
-    // Continue later when SIGA breaks
-    // it("should show SIGA's error case errors", () => {
-    //   return account.login().catch((message) => {
-    //     expect(message).to.be.a("string");
-    //     console.error(message);
-    //     process.exit();
-    //   });
-    // });
 
     it("should login", () => {
       const anotherInstance = getAccount();
@@ -35,6 +40,7 @@ describe("fatec-api", () => {
         expect(anotherInstance.cookie.length > 0).equal(true);
       });
     });
+
     it("should get name", () => {
       getNameDelay = +new Date();
       return account.getName().then((name) => {
@@ -42,6 +48,7 @@ describe("fatec-api", () => {
         expect(name).equal(process.env.NAME);
       });
     });
+
     it("should get profile", () => {
       return account.getProfile().then((profile) => {
         expect(profile).to.have.property("name");
@@ -92,20 +99,16 @@ describe("fatec-api", () => {
       return account.getPartialGrades().then((partialGrades) => {
         if (partialGrades.length) {
           for (const partialGrade of partialGrades) {
-            expect(partialGrade).to.have.property("approved");
             expect(partialGrade).to.have.property("discipline");
             expect(partialGrade).to.have.property("evaluations");
-            expect(partialGrade).to.have.property("finalScore");
-            expect(partialGrade).to.have.property("frequency");
-
-            expect(partialGrade.approved).to.be.a("boolean");
             expect(partialGrade.discipline).to.be.an.instanceof(Discipline);
 
             studentDisciplines.push(partialGrade.discipline);
 
             expect(partialGrade.evaluations).to.be.an("array");
-            expect(partialGrade.finalScore).to.be.a("number");
-            expect(partialGrade.frequency).to.be.a("number");
+            expect(partialGrade.discipline.getGrade()).to.be.a("number");
+            expect(partialGrade.discipline.getFrequency()).to.be.a("number");
+
             for (const evaluation of partialGrade.evaluations) {
               expect(evaluation).to.be.an.instanceof(Evaluation);
               expect(evaluation.applyDates).to.be.an("object");
@@ -142,7 +145,6 @@ describe("fatec-api", () => {
             expect(discipline.getCode()).to.be.a("string");
             expect(discipline.getClassroomId()).to.be.a("number");
             expect(discipline.getClassroomCode()).to.be.a("string");
-            expect(discipline.getQuitDate()).to.be.a("date");
             expect(discipline.getPeriodId()).to.be.a("number");
             expect(discipline.getCourseId()).to.be.a("number");
             expect(discipline.getPresences()).to.be.a("number");
@@ -165,33 +167,29 @@ describe("fatec-api", () => {
             expect(period).to.have.property("startAt");
             expect(period).to.have.property("endAt");
             expect(period).to.have.property("discipline");
-            expect(period).to.have.property("classroomCode");
             expect(period.startAt).to.be.a("date");
             expect(period.endAt).to.be.a("date");
             expect(period.discipline).to.be.a.instanceof(Discipline);
-            expect(period.classroomCode).to.be.a("string");
+            expect(period.discipline.getClassroomCode()).to.be.a("string");
           }
         }
       });
     });
     it("should have history", () => {
-      return account.getHistory().then((entries) => {
+      return account.getHistory().then((history) => {
+        expect(history).to.be.instanceOf(History);
+        const entries = history.getEntries();
         if (entries.length) {
           for (const entry of entries) {
             expect(entry).to.have.property("discipline");
-            expect(entry).to.have.property("period");
-            expect(entry).to.have.property("grade");
-            expect(entry).to.have.property("frequency");
-            expect(entry).to.have.property("absenses");
-            expect(entry).to.have.property("approved");
             expect(entry).to.have.property("observation");
 
             expect(entry.discipline).to.be.a.instanceOf(Discipline);
-            expect(entry.period).to.be.a("string");
-            expect(entry.grade).to.be.a("number");
-            expect(entry.frequency).to.be.a("number");
-            expect(entry.absenses).to.be.a("number");
-            expect(entry.approved).to.be.a("boolean");
+            expect(entry.discipline.getPeriod()).to.be.a("string");
+            expect(entry.discipline.getGrade()).to.be.a("number");
+            expect(entry.discipline.getFrequency()).to.be.a("number");
+            expect(entry.discipline.getAbsenses()).to.be.a("number");
+            expect(entry.discipline.isApproved()).to.be.a("boolean");
             expect(entry.observation).to.be.a("string");
           }
         }
@@ -199,8 +197,11 @@ describe("fatec-api", () => {
     });
     it("should have school grade", () => {
       return account.getSchoolGrade().then((schoolGrade) => {
-        if (schoolGrade.length) {
-          for (const semester of schoolGrade) {
+        expect(schoolGrade).to.be.instanceOf(SchoolGrade);
+        const semesters = schoolGrade.getSemesters();
+        expect(semesters).to.be.an("array");
+        if (semesters.length) {
+          for (const semester of semesters) {
             expect(semester).to.have.property("number");
             expect(semester).to.have.property("disciplines");
             expect(semester.number).to.be.a("number");
@@ -215,20 +216,22 @@ describe("fatec-api", () => {
     });
     it("should have academic calendar", () => {
       return account.getAcademicCalendar().then((calendar) => {
-        if (calendar.length) {
-          expect(calendar.length).to.equal(12);
-          for (const month of calendar) {
-            expect(month).to.be.an("object");
-            expect(month).to.have.property("holidays");
-            expect(month.holidays).to.be.an("array");
+        expect(calendar).to.be.instanceOf(Calendar);
+        const months = calendar.getMonths();
+        expect(months.length).to.equal(12);
+        for (const month of months) {
+          expect(month).to.be.an("object");
+          expect(month).to.have.property("events");
+          expect(month.events).to.be.an("array");
 
-            if (month.holidays.length) {
-              for (const holiday of month.holidays) {
-                expect(holiday).to.have.property("event");
-                expect(holiday).to.have.property("reason");
-                expect(holiday.event).to.be.a("string");
-                expect(holiday.reason).to.be.a("string");
-              }
+          if (month.events.length) {
+            for (const event of month.events) {
+              expect(event).to.have.property("date");
+              expect(event).to.have.property("name");
+              expect(event).to.have.property("reason");
+              expect(event.name).to.be.a("string");
+              expect(event.reason).to.be.a("string");
+              expect(event.date).to.be.a("date");
             }
           }
         }
@@ -277,20 +280,16 @@ describe("fatec-api", () => {
       const partialGrades = account.student.getPartialGrades();
       if (partialGrades.length) {
         for (const partialGrade of partialGrades) {
-          expect(partialGrade).to.have.property("approved");
           expect(partialGrade).to.have.property("discipline");
           expect(partialGrade).to.have.property("evaluations");
-          expect(partialGrade).to.have.property("finalScore");
-          expect(partialGrade).to.have.property("frequency");
-
-          expect(partialGrade.approved).to.be.a("boolean");
           expect(partialGrade.discipline).to.be.an.instanceof(Discipline);
 
           studentDisciplines.push(partialGrade.discipline);
 
           expect(partialGrade.evaluations).to.be.an("array");
-          expect(partialGrade.finalScore).to.be.a("number");
-          expect(partialGrade.frequency).to.be.a("number");
+          expect(partialGrade.discipline.getGrade()).to.be.a("number");
+          expect(partialGrade.discipline.getFrequency()).to.be.a("number");
+
           for (const evaluation of partialGrade.evaluations) {
             expect(evaluation).to.be.an.instanceof(Evaluation);
             expect(evaluation.applyDates).to.be.an("object");
@@ -337,7 +336,6 @@ describe("fatec-api", () => {
           expect(discipline.getCode()).to.be.a("string");
           expect(discipline.getClassroomId()).to.be.a("number");
           expect(discipline.getClassroomCode()).to.be.a("string");
-          expect(discipline.getQuitDate()).to.be.a("date");
           expect(discipline.getPeriodId()).to.be.a("number");
           expect(discipline.getCourseId()).to.be.a("number");
           expect(discipline.getPresences()).to.be.a("number");
@@ -360,33 +358,29 @@ describe("fatec-api", () => {
           expect(period).to.have.property("startAt");
           expect(period).to.have.property("endAt");
           expect(period).to.have.property("discipline");
-          expect(period).to.have.property("classroomCode");
           expect(period.startAt).to.be.a("date");
           expect(period.endAt).to.be.a("date");
           expect(period.discipline).to.be.a.instanceof(Discipline);
-          expect(period.classroomCode).to.be.a("string");
+          expect(period.discipline.getClassroomCode()).to.be.a("string");
         }
       }
     });
 
     it("should have history", () => {
       const history = account.student.getHistory();
-      if (history.length) {
-        for (const entry of history) {
+      expect(history).to.be.instanceOf(History);
+      const entries = history.getEntries();
+      if (entries.length) {
+        for (const entry of entries) {
           expect(entry).to.have.property("discipline");
-          expect(entry).to.have.property("period");
-          expect(entry).to.have.property("grade");
-          expect(entry).to.have.property("frequency");
-          expect(entry).to.have.property("absenses");
-          expect(entry).to.have.property("approved");
           expect(entry).to.have.property("observation");
 
           expect(entry.discipline).to.be.a.instanceOf(Discipline);
-          expect(entry.period).to.be.a("string");
-          expect(entry.grade).to.be.a("number");
-          expect(entry.frequency).to.be.a("number");
-          expect(entry.absenses).to.be.a("number");
-          expect(entry.approved).to.be.a("boolean");
+          expect(entry.discipline.getPeriod()).to.be.a("string");
+          expect(entry.discipline.getGrade()).to.be.a("number");
+          expect(entry.discipline.getFrequency()).to.be.a("number");
+          expect(entry.discipline.getAbsenses()).to.be.a("number");
+          expect(entry.discipline.isApproved()).to.be.a("boolean");
           expect(entry.observation).to.be.a("string");
         }
       }
@@ -394,7 +388,10 @@ describe("fatec-api", () => {
 
     it("should have school grade", () => {
       const schoolGrade = account.student.getSchoolGrade();
-      for (const semester of schoolGrade) {
+      expect(schoolGrade).to.be.instanceOf(SchoolGrade);
+      const semesters = schoolGrade.getSemesters();
+      expect(semesters).to.be.an("array");
+      for (const semester of semesters) {
         expect(semester).to.have.property("number");
         expect(semester).to.have.property("disciplines");
         if (semester.disciplines.length) {
@@ -407,20 +404,22 @@ describe("fatec-api", () => {
 
     it("should have academic calendar", () => {
       const calendar = account.student.getAcademicCalendar();
-      if (calendar.length) {
-        expect(calendar.length).to.equal(12);
-        for (const month of calendar) {
-          expect(month).to.be.an("object");
-          expect(month).to.have.property("holidays");
-          expect(month.holidays).to.be.an("array");
+      expect(calendar).to.be.instanceOf(Calendar);
+      const months = calendar.getMonths();
+      expect(months.length).to.equal(12);
+      for (const month of months) {
+        expect(month).to.be.an("object");
+        expect(month).to.have.property("events");
+        expect(month.events).to.be.an("array");
 
-          if (month.holidays.length) {
-            for (const holiday of month.holidays) {
-              expect(holiday).to.have.property("event");
-              expect(holiday).to.have.property("reason");
-              expect(holiday.event).to.be.a("string");
-              expect(holiday.reason).to.be.a("string");
-            }
+        if (month.events.length) {
+          for (const event of month.events) {
+            expect(event).to.have.property("date");
+            expect(event).to.have.property("name");
+            expect(event).to.have.property("reason");
+            expect(event.name).to.be.a("string");
+            expect(event.reason).to.be.a("string");
+            expect(event.date).to.be.a("date");
           }
         }
       }

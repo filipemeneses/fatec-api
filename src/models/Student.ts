@@ -1,6 +1,9 @@
 import Calendar from "models/Calendar";
 import Discipline from "models/Discipline";
 import Evaluation from "models/Evaluation";
+import History from "models/History";
+import SchoolGrade from "models/SchoolGrade";
+import Schedule from "models/Schedule";
 
 enum EmailIntegrations {
   fatec,
@@ -24,33 +27,6 @@ interface IPartialGrade {
   frequency: number;
   discipline: Discipline;
   evaluations: Evaluation[];
-}
-
-interface IPeriod {
-  startAt: Date;
-  endAt: Date;
-  discipline: Discipline;
-  classroomCode: string;
-}
-
-interface ISchedule {
-  weekday: number; // 1 => Monday
-  periods: IPeriod[];
-}
-
-interface IHistoryEntry {
-  discipline: Discipline;
-  period: string;
-  grade: string;
-  frequency: number;
-  absenses: number;
-  approved: boolean;
-  observation: string;
-}
-
-interface ISchoolGradeEntry {
-  number: number;
-  disciplines: Discipline[];
 }
 
 interface IProfile {
@@ -82,9 +58,9 @@ export default class Student {
   private registeredEmails: IRegisteredEmail[];
   private partialGrades: IPartialGrade[];
   private enrolledDisciplines: Discipline[] = [];
-  private schedules: ISchedule[];
-  private history: IHistoryEntry[];
-  private schoolGrade: ISchoolGradeEntry[];
+  private schedules: Schedule[];
+  private history: History;
+  private schoolGrade: SchoolGrade;
   private academicCalendar: Calendar;
 
   public isEnrolledAtDiscipline (discipline: Discipline): boolean {
@@ -127,27 +103,27 @@ export default class Student {
     return this.academicCalendar;
   }
 
-  public setSchoolGrade (schoolGrade: ISchoolGradeEntry[]): void {
+  public setSchoolGrade (schoolGrade: SchoolGrade): void {
     this.schoolGrade = schoolGrade;
   }
 
-  public getSchoolGrade (): ISchoolGradeEntry[] {
+  public getSchoolGrade (): SchoolGrade {
     return this.schoolGrade;
   }
 
-  public setHistory (history: IHistoryEntry[]): void {
+  public setHistory (history: History): void {
     this.history = history;
   }
 
-  public getHistory (): IHistoryEntry[] {
+  public getHistory (): History {
     return this.history;
   }
 
-  public setSchedules (schedules: ISchedule[]): void {
+  public setSchedules (schedules: Schedule[]): void {
     this.schedules = schedules;
   }
 
-  public getSchedules (): any {
+  public getSchedules (): Schedule[] {
     return this.schedules;
   }
 

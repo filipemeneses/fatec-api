@@ -20,6 +20,7 @@ export default class Discipline {
   private teacherName: string;
   private teacherId: number;
   private absenses: number;
+  private frequency: number;
   private presences: number;
   private classHours: number;
   private state: DisciplineState;
@@ -31,8 +32,10 @@ export default class Discipline {
     classroomCode,
     classroomId,
     classHours,
+    frequency,
     grade,
     quitDate,
+    period,
     periodId,
     presences,
     courseId,
@@ -46,8 +49,10 @@ export default class Discipline {
     classroomCode?: string,
     classroomId?: number,
     classHours?: number,
+    frequency?: number,
     grade?: number,
     quitDate?: Date,
+    period?: string,
     periodId?: number,
     presences?: number,
     courseId?: number,
@@ -58,16 +63,47 @@ export default class Discipline {
     this.absenses = absenses;
     this.name = name;
     this.code = code;
-    this.classroomId = classroomId;
     this.classroomCode = classroomCode;
+    this.classroomId = classroomId;
+    this.classHours = classHours;
+    this.frequency = frequency;
     this.grade = grade;
-    this.quitDate = quitDate || new Date(0);
+    this.quitDate = quitDate;
+    this.period = period;
     this.periodId = periodId;
-    this.courseId = courseId;
     this.presences = presences;
+    this.courseId = courseId;
     this.state = state;
-    this.teacherId = teacherId;
     this.teacherName = teacherName;
+    this.teacherId = teacherId;
+  }
+
+  public isApproved (): boolean {
+    return this.state === "approved";
+  }
+
+  public isNotAttended (): boolean {
+    return this.state === "not-attended";
+  }
+
+  public isAttending (): boolean {
+    return this.state === "attending";
+  }
+
+  public isDismissed (): boolean {
+    return this.state === "dismissed";
+  }
+
+  public isQuited (): boolean {
+    return this.state === "quited";
+  }
+
+  public setFrequency (frequency: number): void {
+    this.frequency = frequency;
+  }
+
+  public getFrequency (): number {
+    return this.frequency;
   }
 
   public setGrade (grade: number): void {
@@ -86,7 +122,7 @@ export default class Discipline {
     return this.state;
   }
 
-  public setclassroomCode (classroomCode: string): void {
+  public setClassroomCode (classroomCode: string): void {
     this.classroomCode = classroomCode;
   }
 
