@@ -2,8 +2,8 @@ import Calendar from "models/Calendar";
 import Discipline from "models/Discipline";
 import Evaluation from "models/Evaluation";
 import History from "models/History";
-import SchoolGrade from "models/SchoolGrade";
 import Schedule from "models/Schedule";
+import SchoolGrade from "models/SchoolGrade";
 
 enum EmailIntegrations {
   fatec,
