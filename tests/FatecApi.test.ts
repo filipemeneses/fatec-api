@@ -317,7 +317,6 @@ describe("fatec-api", () => {
     });
     it("should have enrolled disciplines", () => {
       const enrolledDisciplines = account.student.getEnrolledDisciplines();
-      expect(studentDisciplines.length > 0).to.equal(true);
       expect(enrolledDisciplines.length === studentDisciplines.length);
       enrolledDisciplines.forEach((discipline) => {
         if (accountDisciplines.length) {
