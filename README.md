@@ -1,5 +1,8 @@
 # fatec-api
 
+[![Travis branch](https://img.shields.io/travis/filipemeneses/fatec-api/master.svg)]()
+[![npm](https://img.shields.io/npm/v/fatec-api.svg)]()
+
 API for SIGA from Centro Paula Souza made for students to create scripts based in their profile data.
 
 # Usage
