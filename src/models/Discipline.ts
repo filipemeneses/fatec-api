@@ -8,22 +8,22 @@ enum DisciplineState {
 
 export default class Discipline {
 
+  private absenses: number;
   private name: string;
   private code: string;
-  private period: string;
   private classroomCode: string;
   private classroomId: number;
-  private quitDate: Date;
-  private periodId: number;
-  private courseId: number;
+  private classHours: number;
+  private frequency: number;
   private grade: number;
+  private quitDate: Date;
+  private period: string;
+  private periodId: number;
+  private presences: number;
+  private courseId: number;
+  private state: DisciplineState;
   private teacherName: string;
   private teacherId: number;
-  private absenses: number;
-  private frequency: number;
-  private presences: number;
-  private classHours: number;
-  private state: DisciplineState;
 
   constructor ({
     absenses,
@@ -118,7 +118,7 @@ export default class Discipline {
     this.state = state;
   }
 
-  public getState (state): DisciplineState {
+  public getState (): DisciplineState {
     return this.state;
   }
 

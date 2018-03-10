@@ -1,6 +1,6 @@
 {
   "name": "fatec-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API for SIGA from Centro Paula Souza made for students to create things based in their profile data",
   "keywords": [
     "fatec",
@@ -11,12 +11,12 @@
     "profile-data"
   ],
   "homepage": "https://filipemeneses.gitbooks.io/fatec-api",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/filipemeneses/fatec-api.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/filipemeneses/fatec-api.git"
   },
   "main": "dist/fatec-api.min.js",
-  "types": "dist/index.d.ts",
+  "types": "types/index.d.ts",
   "scripts": {
     "prepublish": "npm run build",
     "test": "npm run test:base 'tests/**/*.test.ts'",
@@ -45,6 +45,7 @@
     "babel-runtime": "^6.26.0",
     "chai": "^4.1.2",
     "dotenv": "^4.0.0",
+    "dtslint": "^0.2.0",
     "mocha": "^4.0.1",
     "ts-loader": "^3.2.0",
     "ts-node": "^3.3.0",

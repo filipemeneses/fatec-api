@@ -84,7 +84,7 @@ export default class Account {
     });
   }
 
-  public getProfile (): Promise<string> {
+  public getProfile (): Promise<object> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
