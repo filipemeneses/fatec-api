@@ -14,7 +14,7 @@ enum EmailIntegrations {
 
 interface IRegisteredEmail {
   email: string;
-  integrations: EmailIntegrations[];
+  integrations?: EmailIntegrations[];
 }
 
 interface IAttendance {

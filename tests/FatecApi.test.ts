@@ -84,10 +84,9 @@ describe("fatec-api", () => {
       return account.getRegisteredEmails().then((registeredEmails) => {
         expect(registeredEmails.length > 0).to.equal(true);
         expect(registeredEmails[0]).to.have.property("email");
-        expect(registeredEmails[0]).to.have.property("integrations");
         const emailIntegrations = ["fatec", "etec", "preferential", "websai"];
         for (const email of registeredEmails) {
-          if (email.integrations.length) {
+          if (email.integrations && email.integrations.length) {
             for (const integration of email.integrations) {
               expect(emailIntegrations).to.contains(integration);
             }
@@ -266,10 +265,9 @@ describe("fatec-api", () => {
       const registeredEmails = account.student.getRegisteredEmails();
       expect(registeredEmails.length > 0).to.equal(true);
       expect(registeredEmails[0]).to.have.property("email");
-      expect(registeredEmails[0]).to.have.property("integrations");
       const emailIntegrations = ["fatec", "etec", "preferential", "websai"];
       for (const email of registeredEmails) {
-        if (email.integrations.length) {
+        if (email.integrations && email.integrations.length) {
           for (const integration of email.integrations) {
             expect(emailIntegrations).to.contains(integration);
           }

@@ -8,6 +8,7 @@ import History from "models/History";
 import Schedule from "models/Schedule";
 import SchoolGrade from "models/SchoolGrade";
 import Student from "models/Student";
+import * as util from "util";
 
 export default class Account {
 
@@ -344,28 +345,12 @@ export default class Account {
       return Network.scrap({
         cookie: this.cookie,
         route: Network.ROUTES.HOME,
-        scrapper: ($$) => {
-          const iFrameSrc = $$('[name="Embpage1"]').attr("src");
-          return Network.scrap({
-            cookie: this.cookie,
-            route: iFrameSrc,
-            scrapper: ($) => {
-              const emailIntegrations = ["fatec", "etec", "preferential", "websai"];
-              const tableData = JSON.parse($("[name=Grid1ContainerDataV]").val());
-              this.student.setRegisteredEmails(tableData.map((line) => {
-                return {
-                  email: line[0],
-                  integrations: line.slice(3, line.length).reduce((integrations, isIntegrated, index) => {
-                    if (isIntegrated === "1") {
-                      integrations.push(emailIntegrations[index]);
-                    }
-                    return integrations;
-                  }, []),
-                };
-              }));
-              return this.student.getRegisteredEmails();
-            },
-          });
+        scrapper: ($) => {
+          const email = $("#span_vPRO_PESSOALEMAIL").text();
+          this.student.setRegisteredEmails([{ email }]);
+          return util.deprecate(() => {
+            return this.student.getRegisteredEmails();
+          }, "Siga won't return registered emails anymore, returning a possible preferential integration instead")();
         },
       });
     });

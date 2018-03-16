@@ -1,3 +1,7 @@
+### 1.1.0 (2018-03-16)
+
+- Depreciating getRegisteredEmails due SIGA modification. The table were e-mails were extracted is removed.
+
 ## 1.0.0 (2017-12-20)
 
 - Added `History`
