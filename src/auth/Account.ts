@@ -147,7 +147,7 @@ export default class Account {
                 "W0002DEZEMBRO",
               ];
               const calendar = months.map((month, monthIndex) => {
-                let events = $(`#${month} tr:last-of-type font`).contents();
+                let events = $(`#${month} tr > td:not([bgcolor="#FFFF00"]) > font[color="#FF0000"]`).contents();
                 events = events.map((i, e) => e.data).get();
                 return {
                   events: events.reduce((_events, event) => {

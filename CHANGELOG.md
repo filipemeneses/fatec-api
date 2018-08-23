@@ -1,3 +1,7 @@
+### 1.2.0 (2018-08-23)
+
+- Updating scrap of month events in the academic calendar due SIGA modification.
+
 ### 1.1.0 (2018-03-16)
 
 - Depreciating getRegisteredEmails due SIGA modification. The table were e-mails were extracted is removed.

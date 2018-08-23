@@ -311,7 +311,7 @@ describe("siga", () => {
         ];
         for (const month of months) {
           expect($iframe(`#${month}`)).to.have.lengthOf(1);
-          expect($iframe(`#${month} tr:last-of-type font`)).to.have.lengthOf(1);
+          expect($iframe(`#${month} tr > td:not([bgcolor="#FFFF00"]) > font[color="#FF0000"]`)).to.have.lengthOf.above(-1);
         }
       });
     });
