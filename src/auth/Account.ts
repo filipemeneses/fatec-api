@@ -103,16 +103,24 @@ export default class Account {
             progress: Parser.strNumber(data["MPW0039vACD_ALUNOCURSOINDICEPP"]),
             unit: data["vUNI_UNIDADENOME_MPAGE"],
           };
-          return Network.scrap({
-            cookie: this.cookie,
-            route: Network.ROUTES.EXCHANGE_PROGRAMS,
-            scrapper: ($exchange) => {
-              profile.email = $exchange("#span_vPRO_PESSOALEMAIL").text();
-              profile.cpf = $exchange("#span_vPRO_PESSOALDOCSCPF").text();
-              profile.birthday = Parser.strDate($exchange("#span_vPRO_PESSOALDATANASCIMENTO").text());
-              this.student.setProfile(profile);
-              return this.student.getProfile();
-            },
+
+          return Network.get({
+            isImage: true,
+            route: $("#MPW0039FOTO img").attr("src"),
+          }).then((buffer) => {
+            profile.picture = Parser.image(buffer);
+
+            return Network.scrap({
+              cookie: this.cookie,
+              route: Network.ROUTES.EXCHANGE_PROGRAMS,
+              scrapper: ($exchange) => {
+                profile.email = $exchange("#span_vPRO_PESSOALEMAIL").text();
+                profile.cpf = $exchange("#span_vPRO_PESSOALDOCSCPF").text();
+                profile.birthday = Parser.strDate($exchange("#span_vPRO_PESSOALDATANASCIMENTO").text());
+                this.student.setProfile(profile);
+                return this.student.getProfile();
+              },
+            });
           });
         },
       });

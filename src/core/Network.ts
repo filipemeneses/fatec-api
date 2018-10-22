@@ -59,19 +59,25 @@ export default class Network {
     return this.delayedRequest(options);
   }
 
-  public static get ({ cookie, route }: { cookie?: string, route: string}): Promise<any> {
-    let headers = {};
+  public static get ({ cookie, route, isImage }: { cookie?: string, route: string, isImage?: boolean}): Promise<any> {
+    const options = {
+      encoding: null,
+      headers: {},
+      method: "GET",
+      route,
+    };
+
     if (cookie) {
-      headers = {
+      options.headers = {
         Cookie: cookie,
       };
     }
-    const options = Network.buildOptions({
-      headers,
-      method: "GET",
-      route,
-    });
-    return this.delayedRequest(options);
+
+    if (isImage) {
+      options.encoding = "base64";
+    }
+
+    return this.delayedRequest(Network.buildOptions(options));
   }
 
   private static scrapperCache = {};
@@ -94,8 +100,14 @@ export default class Network {
     });
   }
 
-  private static buildOptions ({ method, route, headers, form }:
-    {method: string, route: string, headers?: object, form?: object}): object {
+  private static buildOptions ({ method, route, headers, form, encoding }:
+    {
+      method: string,
+      route: string,
+      headers?: object,
+      form?: object,
+      encoding?: string,
+    }): object {
     headers = headers || {};
     headers["User-Agent"] = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 " +
                             "(KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
@@ -106,6 +118,7 @@ export default class Network {
     const uri: string = !route.startsWith("http") ? `${this.DOMAIN}${route}` : route;
 
     return {
+      encoding,
       form: Object.assign({
         GXState: '{"_EventName":"EENTER.","_EventGridId":"","_EventRowId":"",' +
         '"MPW0005_CMPPGM":"login_top.aspx","MPW0005GX_FocusControl":"","vREC_' +

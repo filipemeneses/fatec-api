@@ -1,3 +1,8 @@
+### 1.3.0 (2018-10-22)
+
+- Added profile picture scrappig, `account.getPicture()` returns a base64 PNG image if exists, returns an empty string otherwise.
+- `Student` class now have `picture` property which contains the base64 PNG image.
+
 ### 1.2.0 (2018-08-23)
 
 - Updating scrap of month events in the academic calendar due SIGA modification.

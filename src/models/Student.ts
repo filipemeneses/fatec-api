@@ -38,6 +38,7 @@ interface IProfile {
   email: string;
   name: string;
   period: string;
+  picture?: string;
   progress: number;
   unit: string;
 }
@@ -52,6 +53,7 @@ export default class Student {
   private cpf: string;
   private email: string;
   private period: string;
+  private picture: string;
   private progress: number;
   private unit: string;
 
@@ -76,6 +78,7 @@ export default class Student {
     this.email = profile.email;
     this.name = profile.name;
     this.period = profile.period;
+    this.picture = profile.picture;
     this.progress = profile.progress;
     this.unit = profile.unit;
   }
@@ -90,9 +93,18 @@ export default class Student {
       email: this.email,
       name: this.name,
       period: this.period,
+      picture: this.picture,
       progress: this.progress,
       unit: this.unit,
     };
+  }
+
+  public setPicture (picture: string): void {
+    this.picture = picture;
+  }
+
+  public getPicture (): string {
+    return this.picture;
   }
 
   public setAcademicCalendar (calendar: Calendar): void {

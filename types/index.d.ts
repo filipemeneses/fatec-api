@@ -141,6 +141,7 @@ export interface IProfile {
   email: string;
   name: string;
   period: string;
+  picture?: string;
   progress: number;
   unit: string;
 }

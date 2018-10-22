@@ -61,6 +61,7 @@ describe("fatec-api", () => {
         expect(profile).to.have.property("cpf");
         expect(profile).to.have.property("birthday");
         expect(profile).to.have.property("email");
+        expect(profile).to.have.property("picture");
         expect(profile.name).to.be.a("string");
         expect(profile.averageGrade).to.be.a("number");
         expect(profile.progress).to.be.a("number");
@@ -68,6 +69,7 @@ describe("fatec-api", () => {
         expect(profile.unit).to.be.a("string");
         expect(profile.period).to.be.a("string");
         expect(profile.code).to.be.a("string");
+        expect(profile.picture).to.be.a("string");
         expect(profile.cpf).to.be.a("string");
         expect(profile.birthday).to.be.instanceof(Date);
         expect(profile.email).to.be.a("string");

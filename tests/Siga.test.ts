@@ -1,9 +1,9 @@
 import * as chai from "chai";
 import * as cheerio from "cheerio";
-import * as dotenv from "dotenv";
-import * as mocha from "mocha";
 import Network from "core/Network";
 import Parser from "core/Parser";
+import * as dotenv from "dotenv";
+import * as mocha from "mocha";
 import {getAccount} from "./helpers.js";
 
 const expect = chai.expect;
@@ -78,6 +78,12 @@ describe("siga", () => {
     });
     it("should have an iframe with registered emails array list", () => {
       expect($home("#span_vPRO_PESSOALEMAIL")).to.have.lengthOf(1);
+    });
+    it("should have a profile picture", () => {
+      const tag = $home("#MPW0039FOTO img");
+      expect(tag).to.not.be.a("underfined");
+      expect(tag).to.not.be.a("null");
+      expect(tag.attr("src")).to.be.a("string");
     });
   });
   describe("partial grades", () => {

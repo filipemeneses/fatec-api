@@ -33,4 +33,11 @@ export default class Parser {
     return data;
   }
 
+  public static image (base64Buffer: Buffer): string {
+    if (!base64Buffer) {
+       return "";
+    }
+    return `data:image/jpeg;base64,${base64Buffer.toString("base64")}`;
+  }
+
 }
