@@ -24,9 +24,14 @@ export default class Network {
   }
 
   public static scrap ({ cookie, route, scrapper }: {cookie: string, route: string, scrapper: (object) => void}): any {
-    if (this.scrapperCache[route]) {
-      if (!this.scrapperCache[route].isExpired()) { return Promise.resolve(scrapper(this.scrapperCache[route].$)); }
-      this.scrapperCache[route] = null;
+    if (!this.scrapperCache[cookie]) {
+      this.scrapperCache[cookie] = {};
+    }
+    if (this.scrapperCache[cookie][route]) {
+      if (!this.scrapperCache[cookie][route].isExpired()) {
+        return Promise.resolve(scrapper(this.scrapperCache[cookie][route].$));
+      }
+      this.scrapperCache[cookie][route] = null;
     }
     let promise = Promise.resolve("");
     if (!cookie) {
@@ -39,7 +44,7 @@ export default class Network {
         const $ = cheerio.load(html, { decodeEntities: true });
         const createdAt = +new Date();
         const duration = 1000 * 60 * 5;
-        this.scrapperCache[route] = {
+        this.scrapperCache[cookie][route] = {
           $,
           isExpired () {
            return +new Date() > (createdAt + duration);
@@ -90,12 +95,16 @@ export default class Network {
         setTimeout(() => {
           if (Network.requestsQueue === 1) {
             Network.requestsQueue--;
-            request(options).then(resolve).catch(reject);
+            request(Object.assign({
+              jar: false,
+            }, options)).then(resolve).catch(reject);
           }
         }, 1000);
       } else {
         Network.requestsQueue--;
-        request(options).then(resolve).catch(reject);
+        request(Object.assign({
+          jar: false,
+        }, options)).then(resolve).catch(reject);
       }
     });
   }

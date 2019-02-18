@@ -1,6 +1,6 @@
 {
   "name": "fatec-api",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "API for SIGA from Centro Paula Souza made for students to create things based in their profile data",
   "keywords": [
     "fatec",
@@ -23,10 +23,14 @@
     "test:base": "mocha --timeout 8000 --reporter spec -r ts-node/register  -r tsconfig-paths/register",
     "test:api": "npm run test:base 'tests/FatecApi.test.ts'",
     "test:siga": "npm run test:base 'tests/Siga.test.ts'",
+    "test:cookie": "npm run test:base 'tests/Cookie.test.ts'",
     "lint": "tslint -p .",
     "lint:fix": "tslint -p . --fix",
     "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",
-    "build": "webpack -p --progress"
+    "build": "webpack -p --progress",
+    "changelog:major": "changelog -M",
+    "changelog:minor": "changelog -m",
+    "changelog:patch": "changelog -p"
   },
   "author": "Filipe Meneses <flcmeneses@gmail.com>",
   "license": "ISC",

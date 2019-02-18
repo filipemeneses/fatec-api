@@ -1,3 +1,7 @@
+#### 1.3.1 (2019-02-18)
+
+- Caching by cookie and route instead only route
+
 ### 1.3.0 (2018-10-22)
 
 - Added profile picture scrappig, `account.getPicture()` returns a base64 PNG image if exists, returns an empty string otherwise.
