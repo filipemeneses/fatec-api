@@ -71,12 +71,7 @@ describe("siga", () => {
         expect($exchange("#span_vPRO_PESSOALDATANASCIMENTO")).to.have.lengthOf(1);
       });
     });
-    it("should have an iframe with registered emails", () => {
-      const tag = $home('[name="Embpage1"]');
-      expect(tag).to.have.lengthOf(1);
-      expect(tag.attr("src")).to.be.a("string");
-    });
-    it("should have an iframe with registered emails array list", () => {
+    it("should have an span with registered emails array list", () => {
       expect($home("#span_vPRO_PESSOALEMAIL")).to.have.lengthOf(1);
     });
     it("should have a profile picture", () => {

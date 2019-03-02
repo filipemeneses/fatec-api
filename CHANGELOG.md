@@ -1,3 +1,7 @@
+#### 1.3.2 (2019-03-02)
+
+- SIGA removed iframe from home, it is no longer needed to access iframe to get user registered emails
+
 #### 1.3.1 (2019-02-18)
 
 - Caching by cookie and route instead only route
