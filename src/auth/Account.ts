@@ -50,24 +50,24 @@ export default class Account {
       },
       route: Network.ROUTES.LOGIN,
     })
-    .catch((err) => {
-      if (err.statusCode === Network.STATUS.REDIRECT) {
-        this.state = Account.STATES.LOGGED;
-        this.cookie = Network.getCookieFromResponse(err.response);
-      } else {
-        this.state = Account.STATES.DENIED;
-      }
-    })
-    .then((html) => {
-      // No HTML code means got redirected therefore logged in
-      if (!html) {
-        return;
-      }
+      .catch((err) => {
+        if (err.statusCode === Network.STATUS.REDIRECT) {
+          this.state = Account.STATES.LOGGED;
+          this.cookie = Network.getCookieFromResponse(err.response);
+        } else {
+          this.state = Account.STATES.DENIED;
+        }
+      })
+      .then((html) => {
+        // No HTML code means got redirected therefore logged in
+        if (!html) {
+          return;
+        }
 
-      this.state = Account.STATES.DENIED;
-      const $ = cheerio.load(html);
-      return Promise.reject(new Error($(".ErrorViewer").map((i, e) => $(e).text()).get().join("\n")));
-    });
+        this.state = Account.STATES.DENIED;
+        const $ = cheerio.load(html);
+        return Promise.reject(new Error($(".ErrorViewer").map((i, e) => $(e).text()).get().join("\n")));
+      });
   }
 
   public getName (): Promise<string> {
@@ -78,7 +78,7 @@ export default class Account {
         cookie: this.cookie,
         route: Network.ROUTES.HOME,
         scrapper: ($) => {
-          this.student.setName($("#span_MPW0039vPRO_PESSOALNOME").text());
+          this.student.setName($("#span_MPW0040vPRO_PESSOALNOME").text());
           return this.student.getName();
         },
       });
@@ -95,18 +95,18 @@ export default class Account {
         scrapper: ($) => {
           const data = Parser.parseGxState($("[name=GXState]").val());
           const profile: any = {
-            averageGrade: Parser.strNumber(data["MPW0039vACD_ALUNOCURSOINDICEPR"]),
-            code: data["MPW0039vACD_ALUNOCURSOREGISTROACADEMICOCURSO"],
+            averageGrade: Parser.strNumber(data["MPW0040vACD_ALUNOCURSOINDICEPR"]),
+            code: data["MPW0040vACD_ALUNOCURSOREGISTROACADEMICOCURSO"],
             course: data["vACD_CURSONOME_MPAGE"],
-            name: data["MPW0039vPRO_PESSOALNOME"],
+            name: data["MPW0040vPRO_PESSOALNOME"],
             period: data["vACD_PERIODODESCRICAO_MPAGE"],
-            progress: Parser.strNumber(data["MPW0039vACD_ALUNOCURSOINDICEPP"]),
+            progress: Parser.strNumber(data["MPW0040vACD_ALUNOCURSOINDICEPP"]),
             unit: data["vUNI_UNIDADENOME_MPAGE"],
           };
 
           return Network.get({
             isImage: true,
-            route: $("#MPW0039FOTO img").attr("src"),
+            route: $("#MPW0040FOTO img").attr("src"),
           }).then((buffer) => {
             profile.picture = Parser.image(buffer);
 
@@ -252,7 +252,7 @@ export default class Account {
           const data = JSON.parse($("[name=Grid1ContainerDataV]").attr("value"));
           const approvedCheckboxStr = "Resources/checkTrue.png";
           const entries = data.map((entry) => {
-            const discipline: any = {code: entry[0], name: entry[1]};
+            const discipline: any = { code: entry[0], name: entry[1] };
             const observation = entry[7];
 
             if (entry[3] === approvedCheckboxStr) {
@@ -331,7 +331,7 @@ export default class Account {
                 endAt.setMinutes(parseInt(endMinutes));
                 endAt.setHours(parseInt(endHours));
 
-                const discipline = new Discipline({code: period[2], classroomCode: period[3]});
+                const discipline = new Discipline({ code: period[2], classroomCode: period[3] });
 
                 return { discipline, endAt, startAt };
               }),
