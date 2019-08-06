@@ -25,24 +25,24 @@ export default class Account {
 
   public student: Student = new Student();
 
-  constructor(username: string, password: string) {
+  constructor (username: string, password: string) {
     this.username = username;
     this.password = password;
   }
 
-  public isLogged(): boolean {
+  public isLogged (): boolean {
     return this.state === Account.STATES.LOGGED;
   }
 
-  public isDenied(): boolean {
+  public isDenied (): boolean {
     return this.state === Account.STATES.DENIED;
   }
 
-  public isIdle(): boolean {
+  public isIdle (): boolean {
     return this.state === Account.STATES.IDLE;
   }
 
-  public login(): Promise<any> {
+  public login (): Promise<any> {
     return Network.post({
       form: {
         vSIS_USUARIOID: this.username,
@@ -70,7 +70,7 @@ export default class Account {
       });
   }
 
-  public getName(): Promise<string> {
+  public getName (): Promise<string> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -85,7 +85,7 @@ export default class Account {
     });
   }
 
-  public getProfile(): Promise<object> {
+  public getProfile (): Promise<object> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -127,7 +127,7 @@ export default class Account {
     });
   }
 
-  public getAcademicCalendar(): Promise<any> {
+  public getAcademicCalendar (): Promise<any> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -183,7 +183,7 @@ export default class Account {
     });
   }
 
-  public getSchoolGrade(): Promise<any> {
+  public getSchoolGrade (): Promise<any> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -241,7 +241,7 @@ export default class Account {
     });
   }
 
-  public getHistory(): Promise<any> {
+  public getHistory (): Promise<any> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -280,7 +280,7 @@ export default class Account {
     });
   }
 
-  public getSchedules(): Promise<any> {
+  public getSchedules (): Promise<any> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -346,7 +346,7 @@ export default class Account {
     });
   }
 
-  public getRegisteredEmails(): Promise<any> {
+  public getRegisteredEmails (): Promise<any> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -364,7 +364,7 @@ export default class Account {
     });
   }
 
-  public getPartialGrades(): Promise<any> {
+  public getPartialGrades (): Promise<any> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -430,7 +430,7 @@ export default class Account {
     });
   }
 
-  public getEnrolledDisciplines(): Promise<any> {
+  public getEnrolledDisciplines (): Promise<any> {
     const prom = this.checkCookie();
 
     return prom.then(() => {
@@ -473,7 +473,7 @@ export default class Account {
     });
   }
 
-  private checkCookie(): Promise<void> {
+  private checkCookie (): Promise<void> {
     if (!this.isLogged()) {
       return this.login();
     }
