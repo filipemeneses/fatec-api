@@ -78,7 +78,7 @@ export default class Account {
         cookie: this.cookie,
         route: Network.ROUTES.HOME,
         scrapper: ($) => {
-          this.student.setName($("#span_MPW0039vPRO_PESSOALNOME").text());
+          this.student.setName($("#span_MPW0040vPRO_PESSOALNOME").text());
           return this.student.getName();
         },
       });
@@ -95,18 +95,18 @@ export default class Account {
         scrapper: ($) => {
           const data = Parser.parseGxState($("[name=GXState]").val());
           const profile: any = {
-            averageGrade: Parser.strNumber(data["MPW0039vACD_ALUNOCURSOINDICEPR"]),
-            code: data["MPW0039vACD_ALUNOCURSOREGISTROACADEMICOCURSO"],
+            averageGrade: Parser.strNumber(data["MPW0040vACD_ALUNOCURSOINDICEPR"]),
+            code: data["MPW0040vACD_ALUNOCURSOREGISTROACADEMICOCURSO"],
             course: data["vACD_CURSONOME_MPAGE"],
-            name: data["MPW0039vPRO_PESSOALNOME"],
+            name: data["MPW0040vPRO_PESSOALNOME"],
             period: data["vACD_PERIODODESCRICAO_MPAGE"],
-            progress: Parser.strNumber(data["MPW0039vACD_ALUNOCURSOINDICEPP"]),
+            progress: Parser.strNumber(data["MPW0040vACD_ALUNOCURSOINDICEPP"]),
             unit: data["vUNI_UNIDADENOME_MPAGE"],
           };
 
           return Network.get({
             isImage: true,
-            route: $("#MPW0039FOTO img").attr("src"),
+            route: $("#MPW0040FOTO img").attr("src"),
           }).then((buffer) => {
             profile.picture = Parser.image(buffer);
 
