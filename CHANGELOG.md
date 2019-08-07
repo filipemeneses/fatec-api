@@ -1,3 +1,16 @@
+### 1.4.0 (2019-08-07)
+
+- Updating selectors from `MPW0039` to `MPW0040`
+
+##### Bug Fixes
+
+*  (Lint) ([ecbb04c1](https://github.com/filipemeneses/fatec-api/commit/ecbb04c1a8c8cf212a03652749b1002f8d1426cd))
+*  (getProfile) ([f9687231](https://github.com/filipemeneses/fatec-api/commit/f9687231412395b212253f504861ef215e98e5a7))
+
+##### Refactors
+
+*  (Indend) ([a15842e0](https://github.com/filipemeneses/fatec-api/commit/a15842e0319b0e3a02b34c1313a49526a328b8ab))
+
 #### 1.3.2 (2019-03-02)
 
 - SIGA removed iframe from home, it is no longer needed to access iframe to get user registered emails
