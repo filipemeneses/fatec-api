@@ -129,20 +129,10 @@ export default class Network {
     return {
       encoding,
       form: Object.assign({
-        GXState: '{"_EventName":"EENTER.","_EventGridId":"","_EventRowId":"",' +
-        '"MPW0005_CMPPGM":"login_top.aspx","MPW0005GX_FocusControl":"","vREC_' +
-        'SIS_USUARIOID":"","GX_FocusControl":"vSIS_USUARIOID","GX_AJAX_KEY":"' +
-        '0BDD4711481AA1585555288A38D54A0E","AJAX_SECURITY_TOKEN":"60D2197ED30' +
-        'EA865BA4DDC1181C00E9DE327E1CD49D496228104BEF231E87A2D","GX_CMP_OBJS"' +
-        ':{"MPW0005":"login_top"},"sCallerURL":"","GX_RES_PROVIDER":"GXResour' +
-        'ceProvider.aspx","GX_THEME":"GeneXusX","_MODE":"","Mode":"","IsModif' +
-        'ied":"1"}',
+        GXState: `{"_EventName":"E'EVT_CONFIRMAR'.","_EventGridId":"","_EventRowId":"","MPW0005_CMPPGM":"login_top.aspx","MPW0005GX_FocusControl":"","vSAIDA":"","vREC_SIS_USUARIOID":"","GX_FocusControl":"vSIS_USUARIOID","GX_AJAX_KEY":"8E52B5B99D70A87D9EE89570291ACC86","AJAX_SECURITY_TOKEN":"A8B9DECE0E27179FF4F5F08F98769E720CB87ABB4460CC4A68C467A81BF554BB","GX_CMP_OBJS":{"MPW0005":"login_top"},"sCallerURL":"","GX_RES_PROVIDER":"GXResourceProvider.aspx","GX_THEME":"GeneXusX","_MODE":"","Mode":"","IsModified":"1"}`,
       }, form),
       headers,
       method,
-      params: {
-        "165c97fac0d4c1ad6055e3730b7af070,,gx-no-cache": 1513131652687,
-      },
       strictSSL: false,
       uri,
     };

@@ -8,8 +8,8 @@ import History from "models/History";
 import Schedule from "models/Schedule";
 import SchoolGrade from "models/SchoolGrade";
 import Student from "models/Student";
+import { EmailIntegration } from "models/Student";
 import * as util from "util";
-
 export default class Account {
 
   private static readonly STATES = {
@@ -45,6 +45,8 @@ export default class Account {
   public login (): Promise<any> {
     return Network.post({
       form: {
+        BTCONFIRMA: "Confirmar",
+        GXState: `{"_EventName":"E'EVT_CONFIRMAR'.","_EventGridId":"","_EventRowId":"","MPW0005_CMPPGM":"login_top.aspx","MPW0005GX_FocusControl":"","vSAIDA":"","vREC_SIS_USUARIOID":"","GX_FocusControl":"vSIS_USUARIOID","GX_AJAX_KEY":"8E52B5B99D70A87D9EE89570291ACC86","AJAX_SECURITY_TOKEN":"A8B9DECE0E27179FF4F5F08F98769E720CB87ABB4460CC4A68C467A81BF554BB","GX_CMP_OBJS":{"MPW0005":"login_top"},"sCallerURL":"","GX_RES_PROVIDER":"GXResourceProvider.aspx","GX_THEME":"GeneXusX","_MODE":"","Mode":"","IsModified":"1"}`,
         vSIS_USUARIOID: this.username,
         vSIS_USUARIOSENHA: this.password,
       },
@@ -78,7 +80,8 @@ export default class Account {
         cookie: this.cookie,
         route: Network.ROUTES.HOME,
         scrapper: ($) => {
-          this.student.setName($("#span_MPW0040vPRO_PESSOALNOME").text());
+          const name = $("#span_MPW0041vPRO_PESSOALNOME").text() as string || "" ;
+          this.student.setName(name.replace("-", "").trim());
           return this.student.getName();
         },
       });
@@ -94,21 +97,23 @@ export default class Account {
         route: Network.ROUTES.HOME,
         scrapper: ($) => {
           const data = Parser.parseGxState($("[name=GXState]").val());
+          const [prefix] = Object.keys(data).join(",").match(/MPW\d{4}/) || ["MPW0041"];
+
           const profile: any = {
-            averageGrade: Parser.strNumber(data["MPW0040vACD_ALUNOCURSOINDICEPR"]),
-            code: data["MPW0040vACD_ALUNOCURSOREGISTROACADEMICOCURSO"],
+            averageGrade: Parser.strNumber(data[`${prefix}vACD_ALUNOCURSOINDICEPR`]),
+            code: data[`${prefix}vACD_ALUNOCURSOREGISTROACADEMICOCURSO`],
             course: data["vACD_CURSONOME_MPAGE"],
-            name: data["MPW0040vPRO_PESSOALNOME"],
+            name: data[`${prefix}vPRO_PESSOALNOME`],
             period: data["vACD_PERIODODESCRICAO_MPAGE"],
-            progress: Parser.strNumber(data["MPW0040vACD_ALUNOCURSOINDICEPP"]),
+            progress: Parser.strNumber(data[`${prefix}vACD_ALUNOCURSOINDICEPP`]),
             unit: data["vUNI_UNIDADENOME_MPAGE"],
           };
 
           return Network.get({
             isImage: true,
-            route: $("#MPW0040FOTO img").attr("src"),
+            route: $(`#${prefix}FOTO > img`).attr("src"),
           }).then((buffer) => {
-            profile.picture = Parser.image(buffer);
+            profile.picture = Parser.image(Buffer.from(buffer));
 
             return Network.scrap({
               cookie: this.cookie,
@@ -355,7 +360,26 @@ export default class Account {
         route: Network.ROUTES.HOME,
         scrapper: ($) => {
           const email = $("#span_vPRO_PESSOALEMAIL").text();
-          this.student.setRegisteredEmails([{ email }]);
+          const emailFatec = $("#span_vINSTITUCIONALFATEC").text();
+          const emailEtec = $("#span_vINSTITUCIONALETEC").text();
+          const emailWebsai = $("#span_vEMAILWEBSAI").text();
+          this.student.setRegisteredEmails([{
+              email,
+              integration: EmailIntegration.preferential,
+            },
+            {
+              email: emailFatec,
+              integration: EmailIntegration.fatec,
+            },
+            {
+              email: emailEtec,
+              integration: EmailIntegration.etec,
+            },
+            {
+              email: emailWebsai,
+              integration: EmailIntegration.websai,
+            },
+          ]);
           return util.deprecate(() => {
             return this.student.getRegisteredEmails();
           }, "Siga won't return registered emails anymore, returning a possible preferential integration instead")();
