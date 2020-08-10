@@ -2,6 +2,7 @@ import * as chai from "chai";
 import * as cheerio from "cheerio";
 import Network from "core/Network";
 import Parser from "core/Parser";
+import Util from "core/Util";
 import * as dotenv from "dotenv";
 import * as mocha from "mocha";
 import { getAccount } from "./helpers.js";
@@ -54,14 +55,15 @@ describe("siga", () => {
       expect(tag).to.have.lengthOf(1);
       expect(data).to.be.a("string");
       data = Parser.parseGxState(data);
-      expect(data).to.have.property("MPW0040vPRO_PESSOALNOME");
-      expect(data).to.have.property("MPW0040vMAX_ACD_ALUNOCURSOINDICEPR");
-      expect(data).to.have.property("MPW0040vACD_ALUNOCURSOINDICEPR");
-      expect(data).to.have.property("MPW0040vACD_ALUNOCURSOINDICEPP");
+      const prefix = Util.getPrefixProperties(data);
+      expect(data).to.have.property(`${prefix}vPRO_PESSOALNOME`);
+      expect(data).to.have.property(`${prefix}vMAX_ACD_ALUNOCURSOINDICEPR`);
+      expect(data).to.have.property(`${prefix}vACD_ALUNOCURSOINDICEPR`);
+      expect(data).to.have.property(`${prefix}vACD_ALUNOCURSOINDICEPP`);
       expect(data).to.have.property("vACD_CURSONOME_MPAGE");
       expect(data).to.have.property("vUNI_UNIDADENOME_MPAGE");
       expect(data).to.have.property("vACD_PERIODODESCRICAO_MPAGE");
-      expect(data).to.have.property("MPW0040vACD_ALUNOCURSOREGISTROACADEMICOCURSO");
+      expect(data).to.have.property(`${prefix}vACD_ALUNOCURSOREGISTROACADEMICOCURSO`);
       return Network.get({
         cookie, route: Network.ROUTES.EXCHANGE_PROGRAMS,
       }).then((html) => cheerio.load(html))
@@ -75,7 +77,8 @@ describe("siga", () => {
       expect($home("#span_vPRO_PESSOALEMAIL")).to.have.lengthOf(1);
     });
     it("should have a profile picture", () => {
-      const tag = $home("#MPW0040FOTO img");
+      const prefix = Util.getPrefixProperties(data);
+      const tag = $home(`#${prefix}FOTO > img`);
       expect(tag).to.not.be.a("underfined");
       expect(tag).to.not.be.a("null");
       expect(tag.attr("src")).to.be.a("string");
@@ -312,7 +315,8 @@ describe("siga", () => {
           ];
           for (const month of months) {
             expect($iframe(`#${month}`)).to.have.lengthOf(1);
-            expect($iframe(`#${month} tr > td:not([bgcolor="#FFFF00"]) > font[color="#FF0000"]`)).to.have.lengthOf.above(-1);
+            expect($iframe(`#${month} tr > td:not([bgcolor="#FFFF00"]) > font[color="#FF0000"]`))
+              .to.have.lengthOf.above(-1);
           }
         });
     });

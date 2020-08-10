@@ -1,6 +1,7 @@
 import * as cheerio from "cheerio";
 import Network from "core/Network";
 import Parser from "core/Parser";
+import Util from "core/Util";
 import Calendar from "models/Calendar";
 import Discipline from "models/Discipline";
 import Evaluation from "models/Evaluation";
@@ -97,7 +98,7 @@ export default class Account {
         route: Network.ROUTES.HOME,
         scrapper: ($) => {
           const data = Parser.parseGxState($("[name=GXState]").val());
-          const [prefix] = Object.keys(data).join(",").match(/MPW\d{4}/) || ["MPW0041"];
+          const prefix = Util.getPrefixProperties(data);
 
           const profile: any = {
             averageGrade: Parser.strNumber(data[`${prefix}vACD_ALUNOCURSOINDICEPR`]),
