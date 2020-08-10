@@ -5,7 +5,7 @@ import History from "models/History";
 import Schedule from "models/Schedule";
 import SchoolGrade from "models/SchoolGrade";
 
-enum EmailIntegrations {
+export enum EmailIntegration {
   fatec,
   etec,
   preferential,
@@ -13,8 +13,8 @@ enum EmailIntegrations {
 }
 
 interface IRegisteredEmail {
-  email: string;
-  integrations?: EmailIntegrations[];
+  email?: string;
+  integration: EmailIntegration;
 }
 
 interface IAttendance {
