@@ -10,6 +10,7 @@ import SchoolGrade from "models/SchoolGrade";
 import Student from "models/Student";
 import { EmailIntegration } from "models/Student";
 import * as util from "util";
+
 export default class Account {
 
   private static readonly STATES = {
@@ -80,7 +81,7 @@ export default class Account {
         cookie: this.cookie,
         route: Network.ROUTES.HOME,
         scrapper: ($) => {
-          const name = $("#span_MPW0041vPRO_PESSOALNOME").text() as string || "" ;
+          const name = String($("#span_MPW0041vPRO_PESSOALNOME").text()) || "" ;
           this.student.setName(name.replace("-", "").trim());
           return this.student.getName();
         },
