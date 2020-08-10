@@ -48,7 +48,14 @@ export default class Account {
     return Network.post({
       form: {
         BTCONFIRMA: "Confirmar",
-        GXState: `{"_EventName":"E'EVT_CONFIRMAR'.","_EventGridId":"","_EventRowId":"","MPW0005_CMPPGM":"login_top.aspx","MPW0005GX_FocusControl":"","vSAIDA":"","vREC_SIS_USUARIOID":"","GX_FocusControl":"vSIS_USUARIOID","GX_AJAX_KEY":"8E52B5B99D70A87D9EE89570291ACC86","AJAX_SECURITY_TOKEN":"A8B9DECE0E27179FF4F5F08F98769E720CB87ABB4460CC4A68C467A81BF554BB","GX_CMP_OBJS":{"MPW0005":"login_top"},"sCallerURL":"","GX_RES_PROVIDER":"GXResourceProvider.aspx","GX_THEME":"GeneXusX","_MODE":"","Mode":"","IsModified":"1"}`,
+        GXState: `{"_EventName":"E'EVT_CONFIRMAR'.","_EventGridId":"","_EventRowId":"",` +
+                 `"MPW0005_CMPPGM":"login_top.aspx","MPW0005GX_FocusControl":"","vSAIDA` +
+                 `":"","vREC_SIS_USUARIOID":"","GX_FocusControl":"vSIS_USUARIOID","GX_A` +
+                 `JAX_KEY":"8E52B5B99D70A87D9EE89570291ACC86","AJAX_SECURITY_TOKEN":"A8` +
+                 `B9DECE0E27179FF4F5F08F98769E720CB87ABB4460CC4A68C467A81BF554BB","GX_C` +
+                 `MP_OBJS":{"MPW0005":"login_top"},"sCallerURL":"","GX_RES_PROVIDER":"G` +
+                 `XResourceProvider.aspx","GX_THEME":"GeneXusX","_MODE":"","Mode":"","I` +
+                 `sModified":"1"}`,
         vSIS_USUARIOID: this.username,
         vSIS_USUARIOSENHA: this.password,
       },

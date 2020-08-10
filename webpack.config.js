@@ -50,12 +50,12 @@ module.exports = {
       {
         'test': /\.tsx?$/,
         'loaders': ['babel-loader','ts-loader'],
-        'exclude': [/(node_modules|dist)/,nodeModulesPath]
+        'exclude': [/(node_modules|dist)/, nodeModulesPath]
       },
       {
         'test': /\.(jsx?)$/,
         'loaders': ['babel'],
-        'exclude': [/(node_modules|dist)/,nodeModulesPath]
+        'exclude': [/(node_modules|dist)/, nodeModulesPath]
       },
       {
         test: /\.ts$/,
