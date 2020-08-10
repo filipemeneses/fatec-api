@@ -1,3 +1,20 @@
+### 1.5.0 (2020-08-10)
+
+##### Chores
+
+*  add package lock dependencies ([964e6991](https://github.com/filipemeneses/fatec-api/commit/964e69918f46166b760a97b8f34597a17be3a28e))
+
+##### Bug Fixes
+
+*  login and getProfile... ([57f20c8b](https://github.com/filipemeneses/fatec-api/commit/57f20c8b3c0cf037a4dd6d57d1742abe4e05fc67))
+*  (Lint) ([ecbb04c1](https://github.com/filipemeneses/fatec-api/commit/ecbb04c1a8c8cf212a03652749b1002f8d1426cd))
+*  (getProfile) ([f9687231](https://github.com/filipemeneses/fatec-api/commit/f9687231412395b212253f504861ef215e98e5a7))
+
+##### Refactors
+
+*  change string conversion syntax ([1de03bcb](https://github.com/filipemeneses/fatec-api/commit/1de03bcbd86037e0813be0cda7d379ab4f3482ce))
+*  (Indend) ([a15842e0](https://github.com/filipemeneses/fatec-api/commit/a15842e0319b0e3a02b34c1313a49526a328b8ab))
+
 ### 1.4.0 (2019-08-07)
 
 - Updating selectors from `MPW0039` to `MPW0040`
