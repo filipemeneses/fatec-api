@@ -19,7 +19,7 @@
   "types": "types/index.d.ts",
   "scripts": {
     "prepublish": "npm run build",
-    "test": "npm run test:base 'tests/**/*.test.ts'",
+    "test": "npm run test:base \"./tests/**/*.test.ts\"",
     "test:base": "mocha --timeout 60000 --reporter spec -r ts-node/register  -r tsconfig-paths/register",
     "test:api": "npm run test:base 'tests/FatecApi.test.ts'",
     "test:siga": "npm run test:base 'tests/Siga.test.ts'",
